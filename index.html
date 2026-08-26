@@ -4,6 +4,27 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://regbkvldjhsdbutcdueq.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_PqSbdSx5IvzqZHSjrlIcXg_cgE-uC0V';
+
+  const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+supabaseClient
+  .from('imoveis')
+  .select('id')
+  .limit(1)
+  .then(({ data, error }) => {
+    if (error) {
+      console.error('Erro ao conectar ao Supabase:', error);
+    } else {
+      console.log('Supabase conectado:', data);
+    }
+  });
+</script>
 </head>
 <body>
 <x-dc>
