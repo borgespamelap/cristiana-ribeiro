@@ -2306,7 +2306,40 @@ class Component extends DCLogic {
   }
   isUp(src) { return !!src && String(src).slice(0, 5) === 'data:'; }
   css(src) { return src || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA='; }
-  componentDidMount() { setTimeout(() => this.syncMaps(), 400); this._r = () => { const w = window.innerWidth; if (w !== this.state.w) this.setState({ w }); }; window.addEventListener('resize', this._r); this._r(); document.addEventListener('click', this.onDocClick); document.addEventListener('keydown', this.onKey); this.applyLang(); this.observaReveal(); this.segueCampo(); }
+  componentDidMount() { setTimeout(() => this.syncMaps(), 400); this._r = () => { const w = window.innerWidth; if (w !== this.state.w) this.setState({ w }); }; window.addEventListener('resize', this._r); this._r(); document.addEventListener('click', this.onDocClick); document.addEventListener('keydown', this.onKey); this.applyLang(); this.observaReveal(); this.segueCampo(); this.carregaImoveis(); }
+
+async carregaImoveis() {
+  try {
+    const { data: imoveis, error } = await supabaseClient.from('imoveis').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    const { data: fotos, error: errF } = await supabaseClient.from('imoveis_fotos').select('*').order('ordem', { ascending: true });
+    if (errF) throw errF;
+    const props = (imoveis || []).map(row => this.rowParaProp(row, (fotos || []).filter(f => f.imovel_id === row.id)));
+    this.setState({ props });
+  } catch (e) {
+    console.error('Erro ao carregar imóveis do Supabase:', e);
+    this.toast('Não foi possível carregar os imóveis do banco de dados.');
+  }
+}
+
+rowParaProp(row, fotosDoImovel) {
+  const extra = row.caracteristicas_extra || {};
+  const fotos = (fotosDoImovel || []).map(f => ({ id: 'f' + f.id, url: f.arquivo, zoom: 100, rot: 0, x: 0, y: 0, aspect: 'Livre' }));
+  return {
+    id: row.id, titulo: row.titulo, categoria: row.categoria, tipo: row.tipo, fin: row.finalidade,
+    bairro: row.bairro, cidade: row.cidade, estado: row.estado, cep: row.cep,
+    logradouro: row.logradouro, numero: row.numero, complemento: row.complemento,
+    area: row.area_privativa || 0, areaTotal: row.area_total || 0, dorm: row.dormitorios || 0, ban: row.banheiros || 0,
+    suites: row.suites || 0, vagas: row.vagas || 0, preco: row.valor_venda || 0, cond: row.condominio || 0, iptu: row.iptu || 0,
+    desc1: row.descricao || 'Descrição em elaboração.', desc2: 'Informações complementares fornecidas no atendimento.',
+    notas: row.observacoes_internas || '', status: row.status, up: row.created_at ? this.fmtData(row.created_at) : 'agora',
+    fotos, photo: fotos.length ? fotos[0].url : null,
+    difs: (extra.difs && extra.difs.length) ? extra.difs : ['Sem diferenciais informados'],
+    mobilia: extra.mobilia || 'Não mobiliado', elevador: extra.elevador === true,
+    andar: extra.andar || 0, andares: extra.andares || 0, ano: extra.ano || 0, uso: extra.uso || '',
+    salas: extra.salas || 0, lavabos: extra.lavabos || 0, aprox: extra.aprox === true
+  };
+}
   componentWillUnmount() { if (this._io) this._io.disconnect(); window.removeEventListener('resize', this._r); document.removeEventListener('click', this.onDocClick); document.removeEventListener('keydown', this.onKey); if (this._raf) cancelAnimationFrame(this._raf); clearTimeout(this._t); }
   headerH() { const h = document.querySelector('header'); return (h ? h.getBoundingClientRect().height : 72) + 22; }
   scrollToId = (id) => {
@@ -2944,24 +2977,55 @@ const res = await fetch('https://api.web3forms.com/submit', {
   next = () => this.setState(s => ({ step: Math.min(7, s.step + 1), warn: '' }));
   prev = () => this.setState(s => ({ step: Math.max(1, s.step - 1), warn: '' }));
 
-  buildProp(status) {
-    const f = this.state.form; const n = v => parseInt(v) || 0;
+    buildRow(status) {
+    const f = this.state.form; const n = v => (v !== '' && v != null && !isNaN(parseInt(v))) ? parseInt(v) : null;
     return {
-      id: this.state.editing || Date.now(), titulo: f.titulo.trim() || 'Imóvel sem título', categoria: f.categoria || 'Residencial', tipo: f.tipo, bairro: f.bairro,
-      areaTotal: n(f.areaTotal), salas: n(f.salas), lavabos: n(f.lavabos), andar: n(f.andar), andares: n(f.andares),
-      ano: n(f.ano), mobilia: f.mobilia || 'Não mobiliado', elevador: f.elevador === true, uso: (f.uso || '').trim(),
-      logradouro: f.logradouro.trim(), numero: f.numero.trim(), complemento: f.complemento.trim(), cep: f.cep.trim(), estado: (f.estado || 'RS').trim(), aprox: f.aprox === true,
-      fin: f.finalidade, cidade: (f.cidade || 'Porto Alegre').trim(), preco: n(f.preco), cond: n(f.condominio), iptu: n(f.iptu), area: n(f.area), dorm: n(f.dorm),
-      suites: n(f.suites), ban: n(f.banheiros), vagas: n(f.vagas),
-      photo: this.state.fotos.length ? this.state.fotos[0].url : null, fotos: this.state.fotos, status, up: 'agora',
-      difs: f.difs.length ? f.difs : ['Sem diferenciais informados'],
-      desc1: f.descricao.trim() || 'Descrição em elaboração.', desc2: 'Informações complementares fornecidas no atendimento.'
+      finalidade: f.finalidade, categoria: f.categoria || 'Residencial', tipo: f.tipo,
+      titulo: f.titulo.trim() || 'Imóvel sem título',
+      cep: f.cep.trim(), logradouro: f.logradouro.trim(), numero: f.numero.trim(), complemento: f.complemento.trim(),
+      bairro: f.bairro, cidade: (f.cidade || 'Porto Alegre').trim(), estado: (f.estado || 'RS').trim(),
+      latitude: (this.state.geo && this.state.geo.status === 'ok') ? this.state.geo.lat : null,
+      longitude: (this.state.geo && this.state.geo.status === 'ok') ? this.state.geo.lng : null,
+      area_privativa: n(f.area), area_total: n(f.areaTotal), dormitorios: n(f.dorm), banheiros: n(f.banheiros),
+      suites: n(f.suites), vagas: n(f.vagas), valor_venda: n(f.preco), condominio: n(f.condominio), iptu: n(f.iptu),
+      descricao: f.descricao.trim() || 'Descrição em elaboração.',
+      observacoes_internas: (f.notas || '').trim(),
+      status,
+      caracteristicas_extra: {
+        difs: f.difs, mobilia: f.mobilia, elevador: f.elevador === true,
+        andar: n(f.andar), andares: n(f.andares), ano: n(f.ano), uso: (f.uso || '').trim(),
+        salas: n(f.salas), lavabos: n(f.lavabos), aprox: f.aprox === true
+      }
     };
   }
-  commit(status, msg) {
-    const p = this.buildProp(status);
-    this.setState(s => ({ props: s.editing ? s.props.map(x => x.id === s.editing ? p : x) : [p, ...s.props], route: 'admin', adminTab: status === 'Publicado' ? 'Publicados' : 'Rascunhos', editing: null, step: 1, warn: '' }));
-    this.toast(msg);
+  async salvarFotos(imovelId) {
+    await supabaseClient.from('imoveis_fotos').delete().eq('imovel_id', imovelId);
+    if (this.state.fotos.length) {
+      const linhas = this.state.fotos.map((foto, i) => ({ imovel_id: imovelId, arquivo: foto.url, ordem: i, capa: i === 0 }));
+      const { error } = await supabaseClient.from('imoveis_fotos').insert(linhas);
+      if (error) throw error;
+    }
+  }
+  async commit(status, msg) {
+    const row = this.buildRow(status);
+    try {
+      let imovelId = this.state.editing;
+      if (imovelId) {
+        const { error } = await supabaseClient.from('imoveis').update(row).eq('id', imovelId);
+        if (error) throw error;
+      } else {
+        const { data, error } = await supabaseClient.from('imoveis').insert(row).select().single();
+        if (error) throw error;
+        imovelId = data.id;
+      }
+      await this.salvarFotos(imovelId);
+      await this.carregaImoveis();
+      this.setState({ route: 'admin', adminTab: status === 'Publicado' ? 'Publicados' : 'Rascunhos', editing: null, step: 1, warn: '' });
+      this.toast(msg);
+    } catch (e) {
+      console.error('Erro ao salvar imóvel no Supabase:', e);
+      this.setState({ warn: 'Não foi possível salvar no banco de dados. Tente novamente.' });
+    }
   }
   saveDraft = () => this.commit('Rascunho', 'Rascunho salvo. Ele não aparece no site.');
   publishNew = () => {
@@ -2969,12 +3033,30 @@ const res = await fetch('https://api.web3forms.com/submit', {
     if (!f.titulo.trim() || !f.preco.trim() || !f.area.trim()) return this.setState({ step: 7, warn: 'Para publicar, informe título, área e valor. Você pode salvar como rascunho enquanto isso.' });
     this.commit('Publicado', 'Imóvel publicado. Já aparece na página de imóveis.');
   };
-  setStatus = (id, status, msg) => () => { this.setState(s => ({ props: s.props.map(p => p.id === id ? { ...p, status, up: 'agora' } : p), menuId: null })); this.toast(msg); };
+    setStatus = (id, status, msg) => async () => {
+    try {
+      const { error } = await supabaseClient.from('imoveis').update({ status }).eq('id', id);
+      if (error) throw error;
+      await this.carregaImoveis();
+    } catch (e) { console.error('Erro ao atualizar status:', e); }
+    this.setState({ menuId: null });
+    this.toast(msg);
+  };
   rowMenu = (id) => () => this.setState(s => ({ menuId: s.menuId === id ? null : id }));
   rowView = (id) => () => this.setState({ route: 'detail', pid: id, gi: 0, zoom: false, menuId: null });
   askDelete = (id) => () => this.setState({ delId: id, menuId: null });
   cancelDelete = () => this.setState({ delId: null });
-  confirmDelete = () => { this.setState(s => ({ props: s.props.filter(p => p.id !== s.delId), delId: null })); this.toast('Imóvel excluído definitivamente.'); };
+    confirmDelete = async () => {
+    const id = this.state.delId;
+    try {
+      await supabaseClient.from('imoveis_fotos').delete().eq('imovel_id', id);
+      const { error } = await supabaseClient.from('imoveis').delete().eq('id', id);
+      if (error) throw error;
+      await this.carregaImoveis();
+    } catch (e) { console.error('Erro ao excluir imóvel:', e); }
+    this.setState({ delId: null });
+    this.toast('Imóvel excluído definitivamente.');
+  };
 
   renderVals() {
     const s = this.state, P = this.props;
