@@ -3064,7 +3064,7 @@ const res = await fetch('https://api.web3forms.com/submit', {
     const route = s.logged || !protegida ? s.route : 'login';
     const isPublic = ['home', 'imoveis', 'detail', 'sobre', 'servicos', 'contato', 'investidores'].includes(route);
     const mk = k => ({ mRing: k === 'ring', mCircle: k === 'circle', mSquare: k === 'square', mDiamond: k === 'diamond', mBars: k === 'bars' });
-    const p = s.props.find(x => x.id === s.pid) || s.props[0];
+        const p = s.props.find(x => x.id === s.pid) || s.props[0] || { id: 0, titulo: '', tipo: 'Casa', bairro: '', categoria: 'Residencial', fin: 'Venda', preco: 0, cond: 0, iptu: 0, area: 0, dorm: 0, suites: 0, ban: 0, vagas: 0, photo: null, fotos: [], status: 'Rascunho', up: '', difs: [], desc1: '', desc2: '', cidade: 'Porto Alegre', estado: 'RS' };
     const gLabels = ['Fachada', 'Sala de estar', 'Cozinha', 'Suíte master', 'Área externa'];
     const uniq = a => Array.from(new Set(a.filter(Boolean))).sort((x, y) => x.localeCompare(y, 'pt-BR'));
     const pub = s.props.filter(x => x.status === 'Publicado');
