@@ -1732,8 +1732,8 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 <div role="alert" style="background:#F5E7E0;border-left:2px solid #A8503A;padding:12px 14px;font-size:13.5px;color:#7A3A28;display:flex;gap:8px"><span aria-hidden="true" style="font-weight:700">!</span>{{ wizardWarnMsg }}</div>
 </sc-if>
 <div style="display:flex;gap:12px;flex-wrap:wrap">
-<button onClick="{{ saveDraft }}" style="background:none;border:1px solid #C6B9A7;border-radius:2px;font-weight:600;padding:14px 24px;font-size:14.5px">Salvar rascunho</button>
-<button onClick="{{ publishNew }}" style="background:#2A2220;color:#F6F2EC;border:0;border-radius:2px;font-weight:600;padding:14px 26px;font-size:14.5px" style-hover="background:#9C6444">Publicar imóvel</button>
+<button onClick="{{ saveDraft }}" disabled="{{ wizardSalvando }}" style="background:none;border:1px solid #C6B9A7;border-radius:2px;font-weight:600;padding:14px 24px;font-size:14.5px">{{ wizardBtnRascunhoLabel }}</button>
+<button onClick="{{ publishNew }}" disabled="{{ wizardSalvando }}" style="background:#2A2220;color:#F6F2EC;border:0;border-radius:2px;font-weight:600;padding:14px 26px;font-size:14.5px" style-hover="background:#9C6444">{{ wizardBtnLabel }}</button>
 </div>
 
 
@@ -1846,7 +1846,7 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 <p style="font-size:14.5px;line-height:1.7;color:#5F544C;margin:0 0 26px">A exclusão é definitiva: fotos, valores, descrição e histórico deste imóvel serão removidos e não poderão ser recuperados. Se você quer apenas retirá-lo da operação, use Arquivar.</p>
 <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end">
 <button onClick="{{ cancelDelete }}" style="background:none;border:1px solid #C6B9A7;border-radius:2px;font-weight:600;padding:12px 20px;font-size:14px">Cancelar</button>
-<button onClick="{{ confirmDelete }}" style="background:#A8503A;color:#FFFDF9;border:0;border-radius:2px;padding:12px 22px;font-size:14px;font-weight:600" style-hover="background:#8E3F2C">Excluir definitivamente</button>
+<button onClick="{{ confirmDelete }}" disabled="{{ delExcluindo }}" style="background:#A8503A;color:#FFFDF9;border:0;border-radius:2px;padding:12px 22px;font-size:14px;font-weight:600" style-hover="background:#8E3F2C">{{ delBtnLabel }}</button>
 </div>
 </div>
 </div>
@@ -3055,7 +3055,9 @@ const res = await fetch('https://api.web3forms.com/submit', {
       if (error) throw error;
     }
   }
-  async commit(status, msg) {
+    async commit(status, msg) {
+    if (this.state.salvando) return;
+    this.setState({ salvando: true });
     const row = this.buildRow(status);
     try {
       let imovelId = this.state.editing;
@@ -3069,11 +3071,11 @@ const res = await fetch('https://api.web3forms.com/submit', {
       }
       await this.salvarFotos(imovelId);
       await this.carregaImoveis();
-      this.setState({ route: 'admin', adminTab: status === 'Publicado' ? 'Publicados' : 'Rascunhos', editing: null, step: 1, warn: '' });
+      this.setState({ route: 'admin', adminTab: status === 'Publicado' ? 'Publicados' : 'Rascunhos', editing: null, step: 1, warn: '', salvando: false });
       this.toast(msg);
     } catch (e) {
       console.error('Erro ao salvar imóvel no Supabase:', e);
-      this.setState({ warn: 'Não foi possível salvar no banco de dados. Tente novamente.' });
+      this.setState({ warn: 'Não foi possível salvar no banco de dados. Tente novamente.', salvando: false });
     }
   }
   saveDraft = () => this.commit('Rascunho', 'Rascunho salvo. Ele não aparece no site.');
@@ -3095,7 +3097,9 @@ const res = await fetch('https://api.web3forms.com/submit', {
   rowView = (id) => () => this.setState({ route: 'detail', pid: id, gi: 0, zoom: false, menuId: null });
   askDelete = (id) => () => this.setState({ delId: id, menuId: null });
   cancelDelete = () => this.setState({ delId: null });
-    confirmDelete = async () => {
+  confirmDelete = async () => {
+    if (this.state.excluindo) return;
+    this.setState({ excluindo: true });
     const id = this.state.delId;
     try {
       await supabaseClient.from('imovel_fotos').delete().eq('imovel_id', id);
@@ -3103,7 +3107,7 @@ const res = await fetch('https://api.web3forms.com/submit', {
       if (error) throw error;
       await this.carregaImoveis();
     } catch (e) { console.error('Erro ao excluir imóvel:', e); }
-    this.setState({ delId: null });
+    this.setState({ delId: null, excluindo: false });
     this.toast('Imóvel excluído definitivamente.');
   };
 
@@ -3389,6 +3393,7 @@ const res = await fetch('https://api.web3forms.com/submit', {
       adminEmpty: rows.length === 0,
       delOpen: !!s.delId, delTitle: (s.props.find(x => x.id === s.delId) || {}).titulo || 'este imóvel',
       confirmDelete: this.confirmDelete, cancelDelete: this.cancelDelete,
+      delExcluindo: !!s.excluindo, delBtnLabel: s.excluindo ? 'Excluindo…' : 'Excluir definitivamente',
       adminRows: rows.map(x => ({
         titulo: x.titulo, bairro: (x.categoria || Component.catDeTipo(x.tipo)) + ' · ' + x.bairro, precoFmt: this.precoFmt(x), status: x.status, atualizado: x.up,
         photo: x.photo, photoCss: this.css(x.photo), photoSrc: x.photo, isUpload: this.isUp(x.photo), hasPhoto: !!x.photo, noPhoto: !x.photo,
@@ -3457,6 +3462,7 @@ const res = await fetch('https://api.web3forms.com/submit', {
       adjAspects: ['Livre', '16:9', '4:3', '1:1', '3:4'].map(a => ({ label: a, select: this.setAspect(a), bg: s.adj.aspect === a ? '#2A2220' : '#F6F2EC', fg: s.adj.aspect === a ? '#F6F2EC' : '#4A403A' })),
       setZoom: this.setAdj('zoom'), setX: this.setAdj('x'), setY: this.setAdj('y'), rotate: this.rotate, adjCancel: this.adjCancel, adjApply: this.adjApply,
       nextStep: this.next, prevStep: this.prev, saveDraft: this.saveDraft, publishNew: this.publishNew,
+      wizardSalvando: !!s.salvando, wizardBtnLabel: s.salvando ? 'Salvando…' : 'Publicar imóvel', wizardBtnRascunhoLabel: s.salvando ? 'Salvando…' : 'Salvar rascunho',
       wizardWarn: !!s.warn, wizardWarnMsg: s.warn,
       previewFotoSrc: s.fotos.length ? s.fotos[0].url : '', previewTemFoto: s.fotos.length > 0, previewSemFoto: s.fotos.length === 0,
       previewFotoTransform: s.fotos.length ? this.fotoTransform(s.fotos[0]) : 'none',
