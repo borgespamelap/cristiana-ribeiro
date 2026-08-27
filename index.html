@@ -2645,13 +2645,13 @@ const res = await fetch('https://api.web3forms.com/submit', {
     notas: '',
     atualizado_em: agora,
     historico: [
-      {
-        de: null,
-        para: 'Novo',
-        em: agora
-      }
+        {
+            de: null,
+            para: 'Novo',
+            em: agora
+        }
     ]
-  };
+};
 
   try {
     const { data, error } = await supabaseClient
