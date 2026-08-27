@@ -2566,15 +2566,21 @@ class Component extends DCLogic {
     }
     this.setState({ enviando: true, contactErr: '' });
     try {
-      const res = await fetch(cfg.endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nome: c.nome.trim(), telefone: c.fone.trim(), email: c.email.trim(),
-          interesse: c.interesse, imovel: this.state.interest || '', mensagem: (c.msg || '').trim(), armadilha: '',
-          origem: typeof location !== 'undefined' ? location.href : ''
-        })
-      });
+const res = await fetch('https://api.web3forms.com/submit', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    access_key: '4e49524f-37b8-444b-84a0-af4e5a36b841',
+    subject: 'Contato pelo site - ' + c.nome.trim(),
+    from_name: c.nome.trim(),
+    email: c.email.trim(),
+    telefone: c.fone.trim(),
+    interesse: c.interesse,
+    imovel: this.state.interest || '',
+    message: (c.msg || '').trim(),
+    origem: typeof location !== 'undefined' ? location.href : ''
+  })
+});
       if (!res.ok) throw new Error('HTTP ' + res.status);
       this.setState({ enviando: false, sent: true, sentName: nome, contactErr: '' });
     } catch (e) {
