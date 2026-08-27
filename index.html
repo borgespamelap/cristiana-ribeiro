@@ -2684,23 +2684,26 @@ const res = await fetch('https://api.web3forms.com/submit', {
   abreLead = (id) => () => { this.setState({ route: 'lead', leadId: id, drop: '', notaSalva: true }); this.toTop(); };
   onLeadQ = (e) => this.setState({ leadQ: e.target.value });
   limpaLeads = () => this.setState({ leadQ: '', leadStatus: 'Todos', leadTipo: 'Todos os interesses' });
-  setLeadStatus = (id, novo) => {
-    let mudou = false;
+    setLeadStatus = (id, novo) => {
+    const lead = this.state.leads.find(l => l.id === id);
+    if (!lead || lead.status === novo) return;
+    const agora = new Date().toISOString();
+    const novoHistorico = [{ de: lead.status, para: novo, em: agora }, ...(lead.historico || [])];
     this.setState(s => ({
-      leads: s.leads.map(l => {
-        if (l.id !== id || l.status === novo) return l;
-        mudou = true;
-        const agora = new Date().toISOString();
-        return { ...l, status: novo, atualizadoEm: agora, historico: [{ de: l.status, para: novo, em: agora }, ...l.historico] };
-      })
+      leads: s.leads.map(l => l.id === id ? { ...l, status: novo, atualizadoEm: agora, historico: novoHistorico } : l)
     }));
-    if (mudou) this.toast('Status atualizado para ' + novo + '.');
+    this.toast('Status atualizado para ' + novo + '.');
+    this.salvaLead(id, { status: novo, atualizado_em: agora, historico: novoHistorico });
   };
-  onNota = (e) => {
+    onNota = (e) => {
     const v = e.target.value, id = this.state.leadId;
-    this.setState(s => ({ leads: s.leads.map(l => l.id === id ? { ...l, notas: v, atualizadoEm: new Date().toISOString() } : l), notaSalva: false }));
+    const agora = new Date().toISOString();
+    this.setState(s => ({ leads: s.leads.map(l => l.id === id ? { ...l, notas: v, atualizadoEm: agora } : l), notaSalva: false }));
     clearTimeout(this._nota);
-    this._nota = setTimeout(() => this.setState({ notaSalva: true }), 700);
+    this._nota = setTimeout(() => {
+      this.salvaLead(id, { notas: v, atualizado_em: agora });
+      this.setState({ notaSalva: true });
+    }, 700);
   };
   async criaLead(c) {
   const agora = new Date().toISOString();
@@ -2729,7 +2732,7 @@ const res = await fetch('https://api.web3forms.com/submit', {
     ]
 };
 
-  try {
+    try {
     const { data, error } = await supabaseClient
       .from('leads')
       .insert(novoLead)
@@ -2738,19 +2741,22 @@ const res = await fetch('https://api.web3forms.com/submit', {
 
     if (error) throw error;
 
+    const leadDisplay = this.rowParaLead(data);
     this.setState(s => ({
-      leads: [data, ...s.leads]
+      leads: [leadDisplay, ...s.leads]
     }));
 
-    return data;
+    return leadDisplay;
 
   } catch (error) {
     console.error('Erro ao salvar lead no Supabase:', error);
 
-    // Mantém o lead no painel mesmo se o banco falhar
     const leadLocal = {
-      ...novoLead,
-      id: 'lead-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8)
+      id: 'lead-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+      nome: novoLead.nome, email: novoLead.email, telefone: novoLead.telefone,
+      tipo: novoLead.interesse, imovelId: imovel ? imovel.id : null, imovelTitulo: novoLead.imovel,
+      mensagem: novoLead.mensagem, origem: novoLead.origem, status: novoLead.status, notas: novoLead.notas,
+      criadoEm: agora, atualizadoEm: agora, historico: novoLead.historico
     };
 
     this.setState(s => ({
