@@ -2914,7 +2914,7 @@ const res = await fetch('https://api.web3forms.com/submit', {
       this.drawMap('admin', this.adminMapRef.current, s.geo, !s.form.aprox);
     }
     if (s.route === 'detail') {
-      const p = s.props.find(x => x.id === s.pid) || s.props[0];
+      const p = s.props.find(x => x.id === s.pid) || s.props[0] || { id: 0, titulo: '', tipo: 'Casa', bairro: '', categoria: 'Residencial', fin: 'Venda', preco: 0, cond: 0, iptu: 0, area: 0, dorm: 0, suites: 0, ban: 0, vagas: 0, photo: null, fotos: [], status: 'Rascunho', up: '', difs: [], desc1: '', desc2: '', cidade: 'Porto Alegre', estado: 'RS' };
       const q = this.endereco(p).busca;
       const fallback = (p.bairro || '') + ', ' + (p.cidade || 'Porto Alegre') + ', ' + (p.estado || 'RS') + ', Brasil';
       const achado = this._geoCache[q] || this._geoCache[fallback];
