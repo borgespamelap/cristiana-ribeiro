@@ -2635,8 +2635,8 @@ const res = await fetch('https://api.web3forms.com/submit', {
 
   const novoLead = {
     nome: c.nome.trim(),
-    'e-mail': c.email.trim(),
-    'WhatsApp / Telefone': c.fone.trim(),
+    email: c.email.trim(),
+    telefone: c.fone.trim(),
     interesse: c.interesse,
     imovel: imovel ? imovel.titulo : '',
     mensagem: (c.msg || '').trim(),
