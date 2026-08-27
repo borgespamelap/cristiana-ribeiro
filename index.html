@@ -2306,7 +2306,7 @@ class Component extends DCLogic {
   }
   isUp(src) { return !!src && String(src).slice(0, 5) === 'data:'; }
   css(src) { return src || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA='; }
-  componentDidMount() { setTimeout(() => this.syncMaps(), 400); this._r = () => { const w = window.innerWidth; if (w !== this.state.w) this.setState({ w }); }; window.addEventListener('resize', this._r); this._r(); document.addEventListener('click', this.onDocClick); document.addEventListener('keydown', this.onKey); this.applyLang(); this.observaReveal(); this.segueCampo(); this.carregaImoveis(); }
+  componentDidMount() { setTimeout(() => this.syncMaps(), 400); this._r = () => { const w = window.innerWidth; if (w !== this.state.w) this.setState({ w }); }; window.addEventListener('resize', this._r); this._r(); document.addEventListener('click', this.onDocClick); document.addEventListener('keydown', this.onKey); this.applyLang(); this.observaReveal(); this.segueCampo(); this.carregaImoveis().then(() => this.carregaLeads()); }
 
 async carregaImoveis() {
   try {
@@ -2337,9 +2337,52 @@ rowParaProp(row, fotosDoImovel) {
     difs: (extra.difs && extra.difs.length) ? extra.difs : ['Sem diferenciais informados'],
     mobilia: extra.mobilia || 'Não mobiliado', elevador: extra.elevador === true,
     andar: extra.andar || 0, andares: extra.andares || 0, ano: extra.ano || 0, uso: extra.uso || '',
-    salas: extra.salas || 0, lavabos: extra.lavabos || 0, aprox: extra.aprox === true
+        salas: extra.salas || 0, lavabos: extra.lavabos || 0, aprox: extra.aprox === true
   };
 }
+
+async carregaLeads() {
+  try {
+    const { data, error } = await supabaseClient.from('leads').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    const leads = (data || []).map(row => this.rowParaLead(row));
+    this.setState({ leads });
+  } catch (e) {
+    console.error('Erro ao carregar leads do Supabase:', e);
+  }
+}
+
+rowParaLead(row) {
+  const imovel = this.state.props.find(p => p.titulo === row.imovel) || null;
+  return {
+    id: row.id,
+    nome: row.nome || '',
+    email: row.email || '',
+    telefone: row.telefone || '',
+    tipo: row.interesse || '',
+    imovelId: imovel ? imovel.id : null,
+    imovelTitulo: row.imovel || '',
+    mensagem: row.mensagem || '',
+    origem: row.origem || '',
+    status: row.status || 'Novo',
+    notas: row.notas || '',
+    criadoEm: row.created_at,
+    atualizadoEm: row.atualizado_em,
+    historico: row.historico || [{ de: null, para: row.status || 'Novo', em: row.created_at }]
+  };
+}
+
+async salvaLead(id, patch) {
+  if (typeof id === 'string' && id.indexOf('lead-') === 0) return;
+  try {
+    const { error } = await supabaseClient.from('leads').update(patch).eq('id', id);
+    if (error) throw error;
+  } catch (e) {
+    console.error('Erro ao atualizar lead no Supabase:', e);
+    this.toast('Não foi possível salvar essa alteração no banco de dados.');
+  }
+}
+
   componentWillUnmount() { if (this._io) this._io.disconnect(); window.removeEventListener('resize', this._r); document.removeEventListener('click', this.onDocClick); document.removeEventListener('keydown', this.onKey); if (this._raf) cancelAnimationFrame(this._raf); clearTimeout(this._t); }
   headerH() { const h = document.querySelector('header'); return (h ? h.getBoundingClientRect().height : 72) + 22; }
   scrollToId = (id) => {
