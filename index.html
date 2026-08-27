@@ -2553,7 +2553,7 @@ class Component extends DCLogic {
   async entrega(c) {
     const cfg = Component.ENVIO;
     const nome = c.nome.trim().split(' ')[0];
-    this.criaLead(c); // lead registrado antes do e-mail: falha no envio não perde o contato
+    await this.criaLead(c); // lead registrado antes do e-mail: falha no envio não perde o contato
     if (!cfg.endpoint) {
       const texto = this.corpoMensagem(c);
       this.setState({
@@ -2626,23 +2626,64 @@ const res = await fetch('https://api.web3forms.com/submit', {
     clearTimeout(this._nota);
     this._nota = setTimeout(() => this.setState({ notaSalva: true }), 700);
   };
-  criaLead(c) {
-    const agora = new Date().toISOString();
-    const imovel = this.state.props.find(p => p.titulo === this.state.interest) || null;
-    const lead = {
-      id: 'lead-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
-      nome: c.nome.trim(), email: c.email.trim(), telefone: c.fone.trim(),
-      tipo: Component.TIPO_DE_INTERESSE[c.interesse] || 'Compra',
-      imovelId: imovel ? imovel.id : null,
-      imovelTitulo: imovel ? imovel.titulo : '',
-      mensagem: (c.msg || '').trim(),
-      origem: imovel ? 'Página de Imóvel' : 'Formulário de Contato',
-      status: 'Novo', notas: '', criadoEm: agora, atualizadoEm: agora,
-      historico: [{ de: null, para: 'Novo', em: agora }]
+  async criaLead(c) {
+  const agora = new Date().toISOString();
+
+  const imovel = this.state.props.find(
+    p => p.titulo === this.state.interest
+  ) || null;
+
+  const novoLead = {
+    nome: c.nome.trim(),
+    'e-mail': c.email.trim(),
+    'WhatsApp / Telefone': c.fone.trim(),
+    interesse: c.interesse,
+    imovel: imovel ? imovel.titulo : '',
+    mensagem: (c.msg || '').trim(),
+    origem: imovel ? 'Página de Imóvel' : 'Formulário de Contato',
+    status: 'Novo',
+    notas: '',
+    atualizado_em: agora,
+    historico: [
+      {
+        de: null,
+        para: 'Novo',
+        em: agora
+      }
+    ]
+  };
+
+  try {
+    const { data, error } = await supabaseClient
+      .from('leads')
+      .insert(novoLead)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    this.setState(s => ({
+      leads: [data, ...s.leads]
+    }));
+
+    return data;
+
+  } catch (error) {
+    console.error('Erro ao salvar lead no Supabase:', error);
+
+    // Mantém o lead no painel mesmo se o banco falhar
+    const leadLocal = {
+      ...novoLead,
+      id: 'lead-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8)
     };
-    this.setState(s => ({ leads: [lead, ...s.leads] }));
-    return lead;
+
+    this.setState(s => ({
+      leads: [leadLocal, ...s.leads]
+    }));
+
+    return leadLocal;
   }
+}
   investorCta = () => { this.setState(s => ({ route: 'contato', sent: false, interest: 'Investor Hub — consulta de investimento', c: { ...s.c, interesse: 'Investir', msg: this.tr('Gostaria de agendar uma consulta de investimento.') } })); this.paraForm(); this.toast('Consulta de investimento: complete seus dados abaixo.'); };
   recover = () => this.toast('Enviei um link de recuperação para o seu e-mail.');
 
