@@ -2312,7 +2312,7 @@ async carregaImoveis() {
   try {
     const { data: imoveis, error } = await supabaseClient.from('imoveis').select('*').order('created_at', { ascending: false });
     if (error) throw error;
-    const { data: fotos, error: errF } = await supabaseClient.from('imoveis_fotos').select('*').order('ordem', { ascending: true });
+    const { data: fotos, error: errF } = await supabaseClient.from('imovel_fotos').select('*').order('ordem', { ascending: true });
     if (errF) throw errF;
     const props = (imoveis || []).map(row => this.rowParaProp(row, (fotos || []).filter(f => f.imovel_id === row.id)));
     this.setState({ props });
@@ -2999,10 +2999,10 @@ const res = await fetch('https://api.web3forms.com/submit', {
     };
   }
   async salvarFotos(imovelId) {
-    await supabaseClient.from('imoveis_fotos').delete().eq('imovel_id', imovelId);
+    await supabaseClient.from('imovel_fotos').delete().eq('imovel_id', imovelId);
     if (this.state.fotos.length) {
       const linhas = this.state.fotos.map((foto, i) => ({ imovel_id: imovelId, arquivo: foto.url, ordem: i, capa: i === 0 }));
-      const { error } = await supabaseClient.from('imoveis_fotos').insert(linhas);
+      const { error } = await supabaseClient.from('imovel_fotos').insert(linhas);
       if (error) throw error;
     }
   }
@@ -3049,7 +3049,7 @@ const res = await fetch('https://api.web3forms.com/submit', {
     confirmDelete = async () => {
     const id = this.state.delId;
     try {
-      await supabaseClient.from('imoveis_fotos').delete().eq('imovel_id', id);
+      await supabaseClient.from('imovel_fotos').delete().eq('imovel_id', id);
       const { error } = await supabaseClient.from('imoveis').delete().eq('id', id);
       if (error) throw error;
       await this.carregaImoveis();
