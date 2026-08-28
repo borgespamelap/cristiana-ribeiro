@@ -1414,7 +1414,13 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 <button onClick="{{ backToAdmin }}" style="background: none; border: 0; padding: 0; font-size: 14px; color: #6E6157; margin-bottom: 14px">← Meus imóveis</button>
 <h1 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(32px,3.5vw,45px);line-height:1.08;margin:0">{{ wizardTitle }}</h1>
 </div>
-<div style="font-size:13px;color:#6E6157">Etapa {{ stepNum }} de 7</div>
+<div style="display:flex;align-items:center;gap:16px">
+<span style="font-size:13px;color:#6E6157">Etapa {{ stepNum }} de 7</span>
+<sc-if value="{{ mostrarSalvarEdicao }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ salvarEdicao }}" style="background:#2A2220;color:#F6F2EC;border:0;border-radius:2px;font-weight:600;padding:10px 18px;font-size:13px" style-hover="background:#9C6444">Salvar alterações</button>
+</sc-if>
+</div>
+</div>
 </div>
 
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px">
@@ -3094,6 +3100,12 @@ const res = await fetch('https://api.web3forms.com/submit', {
     }
   }
   saveDraft = () => this.commit('Rascunho', 'Rascunho salvo. Ele não aparece no site.');
+  salvarEdicao = () => {
+    if (!this.state.editing) return;
+    const atual = this.state.props.find(p => p.id === this.state.editing);
+    const status = atual ? atual.status : 'Rascunho';
+    this.commit(status, 'Alterações salvas.');
+  };
   publishNew = () => {
     const f = this.state.form;
     if (!f.titulo.trim() || !f.preco.trim() || !f.area.trim()) return this.setState({ step: 7, warn: 'Para publicar, informe título, área e valor. Você pode salvar como rascunho enquanto isso.' });
@@ -3477,6 +3489,7 @@ const res = await fetch('https://api.web3forms.com/submit', {
       adjAspects: ['Livre', '16:9', '4:3', '1:1', '3:4'].map(a => ({ label: a, select: this.setAspect(a), bg: s.adj.aspect === a ? '#2A2220' : '#F6F2EC', fg: s.adj.aspect === a ? '#F6F2EC' : '#4A403A' })),
       setZoom: this.setAdj('zoom'), setX: this.setAdj('x'), setY: this.setAdj('y'), rotate: this.rotate, adjCancel: this.adjCancel, adjApply: this.adjApply,
       nextStep: this.next, prevStep: this.prev, saveDraft: this.saveDraft, publishNew: this.publishNew,
+      mostrarSalvarEdicao: !!s.editing, salvarEdicao: this.salvarEdicao,
       wizardSalvando: !!s.salvando, wizardBtnLabel: s.salvando ? 'Salvando…' : 'Publicar imóvel', wizardBtnRascunhoLabel: s.salvando ? 'Salvando…' : 'Salvar rascunho',
       wizardWarn: !!s.warn, wizardWarnMsg: s.warn,
       previewFotoSrc: s.fotos.length ? s.fotos[0].url : '', previewTemFoto: s.fotos.length > 0, previewSemFoto: s.fotos.length === 0,
