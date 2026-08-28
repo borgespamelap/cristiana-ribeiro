@@ -64,6 +64,8 @@ select:disabled{color:#7A6C5E;cursor:not-allowed;opacity:.6}
 @keyframes reveal{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes revealImg{from{opacity:0;transform:scale(1.014)}to{opacity:1;transform:none}}
 @keyframes dropIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+@keyframes pulseSkeleton{0%,100%{opacity:1}50%{opacity:.55}}
+.skeleton-block{animation:pulseSkeleton 1.4s ease-in-out infinite;background:#EAE1D4}
 :focus-visible{outline:2px solid #9C6444;outline-offset:3px}
 :focus:not(:focus-visible){outline:none}
 
@@ -282,6 +284,18 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 </div>
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:28px">
 <sc-for list="{{ featured }}" as="item" hint-placeholder-count="3">
+<sc-if value="{{ item.isSkeleton }}" hint-placeholder-val="{{ false }}">
+<div style="background:#FFFDF9;border:1px solid #E5DBCD;border-radius:3px;overflow:hidden">
+<div class="skeleton-block" style="aspect-ratio:4/3"></div>
+<div style="padding:22px 22px 24px">
+<div class="skeleton-block" style="height:11px;width:60%;border-radius:2px;margin-bottom:14px"></div>
+<div class="skeleton-block" style="height:22px;width:85%;border-radius:2px;margin-bottom:16px"></div>
+<div class="skeleton-block" style="height:11px;width:50%;border-radius:2px;margin-bottom:18px"></div>
+<div class="skeleton-block" style="height:17px;width:40%;border-radius:2px"></div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ item.isSkeleton }}" hint-placeholder-val="{{ true }}">
 <article onClick="{{ item.open }}" onKeyDown="{{ item.key }}" tabindex="0" role="link" aria-label="{{ item.aria }}" style="cursor:pointer;background:#FFFDF9;border:1px solid #E5DBCD;border-radius:3px;overflow:hidden" style-hover="border-color:#C9A98F">
 <div style="position:relative;aspect-ratio:4/3;overflow:hidden;background:#EFE8DC">
 <div style="width:100%;height:100%;background-image:repeating-linear-gradient(135deg,#E7DED1 0 14px,#EFE8DC 14px 28px)">
@@ -310,6 +324,7 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 </div>
 </div>
 </article>
+</sc-if>
 </sc-for>
 </div>
 </div>
@@ -1915,7 +1930,7 @@ class Component extends DCLogic {
     ],
     extras: false, novoDif: '', novoDifOpen: false, difsProprios: [],
     form: { aprox: false, logradouro: '', numero: '', complemento: '', cep: '', estado: 'RS', finalidade: 'Venda', categoria: 'Residencial', tipo: 'Casa', titulo: '', cidade: 'Porto Alegre', bairro: 'Moinhos de Vento', endereco: '', area: '', dorm: '', suites: '', banheiros: '', vagas: '', preco: '', condominio: '', iptu: '', descricao: '', notas: '', difs: [] },
-    fotos: [],
+    fotos: [], carregandoImoveis: true,
     props: [],
   };
 
@@ -2322,10 +2337,11 @@ async carregaImoveis() {
     const { data: fotos, error: errF } = await supabaseClient.from('imovel_fotos').select('*').order('ordem', { ascending: true });
     if (errF) throw errF;
     const props = (imoveis || []).map(row => this.rowParaProp(row, (fotos || []).filter(f => f.imovel_id === row.id)));
-    this.setState({ props });
+    this.setState({ props, carregandoImoveis: false });
   } catch (e) {
     console.error('Erro ao carregar imóveis do Supabase:', e);
     this.toast('Não foi possível carregar os imóveis do banco de dados.');
+    this.setState({ carregandoImoveis: false });
   }
 }
 
@@ -2427,6 +2443,9 @@ async salvaLead(id, patch) {
     this.setState(s => ({ gi: (s.gi + (d < 0 ? 1 : -1) + this.galN) % this.galN }));
   };
 
+    skeletonCard() {
+    return { isSkeleton: true, id: 'sk-' + Math.random() };
+  }
   card(p) {
     return {
       id: p.id, titulo: p.titulo, categoria: p.categoria || Component.catDeTipo(p.tipo),
@@ -3330,8 +3349,10 @@ const res = await fetch('https://api.web3forms.com/submit', {
       faixaOpts: fin === 'Venda' ? ['Todos os valores', 'Até R$ 500 mil', 'R$ 500 mil – R$ 1 milhão', 'R$ 1 milhão – R$ 1,5 milhão', 'R$ 1,5 milhão – R$ 2 milhões', 'Acima de R$ 2 milhões'] : ['Todos os valores', 'Até R$ 5 mil', 'R$ 5 a 10 mil', 'Acima de R$ 10 mil'],
       dormOpts: ['Qualquer', '2', '3', '4'], areaOpts: ['Qualquer', '100', '150', '250', '400'],
       ordOpts: ['Mais recentes', 'Menor valor', 'Maior valor'],
-      featured: s.props.filter(x => x.status === 'Publicado').slice(0, 3).map(x => this.card(x)),
-      results: results.map(x => this.card(x)), hasResults: results.length > 0, noResults: results.length === 0,
+      featured: s.carregandoImoveis ? [this.skeletonCard(), this.skeletonCard(), this.skeletonCard()] : s.props.filter(x => x.status === 'Publicado').slice(0, 3).map(x => this.card(x)),
+      carregandoImoveis: s.carregandoImoveis,
+      results: s.carregandoImoveis ? [this.skeletonCard(), this.skeletonCard(), this.skeletonCard(), this.skeletonCard(), this.skeletonCard(), this.skeletonCard()] : results.map(x => this.card(x)),
+      hasResults: s.carregandoImoveis || results.length > 0, noResults: !s.carregandoImoveis && results.length === 0,
       listTitle: fin === 'Aluguel' ? 'Imóveis para alugar' : 'Imóveis para comprar',
       listCount: results.length + (results.length === 1 ? ' imóvel encontrado' : ' imóveis encontrados') + (fin === 'Aluguel' ? ' para alugar' : ' para comprar'),
 
