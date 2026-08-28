@@ -1417,7 +1417,7 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 <div style="display:flex;align-items:center;gap:16px">
 <span style="font-size:13px;color:#6E6157">Etapa {{ stepNum }} de 7</span>
 <sc-if value="{{ mostrarSalvarEdicao }}" hint-placeholder-val="{{ false }}">
-<button onClick="{{ salvarEdicao }}" style="background:#2A2220;color:#F6F2EC;border:0;border-radius:2px;font-weight:600;padding:10px 18px;font-size:13px" style-hover="background:#9C6444">Salvar alterações</button>
+<button onClick="{{ salvarEdicao }}" disabled="{{ salvarEdicaoDisabled }}" style="background:#2A2220;color:#F6F2EC;border:0;border-radius:2px;font-weight:600;padding:10px 18px;font-size:13px" style-hover="background:#9C6444">{{ salvarEdicaoLabel }}</button>
 </sc-if>
 </div>
 </div>
@@ -3099,11 +3099,23 @@ const res = await fetch('https://api.web3forms.com/submit', {
     }
   }
   saveDraft = () => this.commit('Rascunho', 'Rascunho salvo. Ele não aparece no site.');
-  salvarEdicao = () => {
-    if (!this.state.editing) return;
+    salvarEdicao = async () => {
+    if (!this.state.editing || this.state.salvando) return;
+    this.setState({ salvando: true });
     const atual = this.state.props.find(p => p.id === this.state.editing);
     const status = atual ? atual.status : 'Rascunho';
-    this.commit(status, 'Alterações salvas.');
+    const row = this.buildRow(status);
+    try {
+      const { error } = await supabaseClient.from('imoveis').update(row).eq('id', this.state.editing);
+      if (error) throw error;
+      await this.salvarFotos(this.state.editing);
+      await this.carregaImoveis();
+      this.setState({ salvando: false, warn: '' });
+      this.toast('Alterações salvas.');
+    } catch (e) {
+      console.error('Erro ao salvar alterações no Supabase:', e);
+      this.setState({ salvando: false, warn: 'Não foi possível salvar. Tente novamente.' });
+    }
   };
   publishNew = () => {
     const f = this.state.form;
@@ -3489,6 +3501,7 @@ const res = await fetch('https://api.web3forms.com/submit', {
       setZoom: this.setAdj('zoom'), setX: this.setAdj('x'), setY: this.setAdj('y'), rotate: this.rotate, adjCancel: this.adjCancel, adjApply: this.adjApply,
       nextStep: this.next, prevStep: this.prev, saveDraft: this.saveDraft, publishNew: this.publishNew,
       mostrarSalvarEdicao: !!s.editing, salvarEdicao: this.salvarEdicao,
+      salvarEdicaoLabel: s.salvando ? 'Salvando…' : 'Salvar alterações', salvarEdicaoDisabled: !!s.salvando,
       wizardSalvando: !!s.salvando, wizardBtnLabel: s.salvando ? 'Salvando…' : 'Publicar imóvel', wizardBtnRascunhoLabel: s.salvando ? 'Salvando…' : 'Salvar rascunho',
       wizardWarn: !!s.warn, wizardWarnMsg: s.warn,
       previewFotoSrc: s.fotos.length ? s.fotos[0].url : '', previewTemFoto: s.fotos.length > 0, previewSemFoto: s.fotos.length === 0,
