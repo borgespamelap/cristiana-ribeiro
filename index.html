@@ -2308,7 +2308,7 @@ class Component extends DCLogic {
   }
   isUp(src) { return !!src && String(src).slice(0, 5) === 'data:'; }
   css(src) { return src || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA='; }
-  componentDidMount() { setTimeout(() => this.syncMaps(), 400); this._r = () => { const w = window.innerWidth; if (w !== this.state.w) this.setState({ w }); }; window.addEventListener('resize', this._r); this._r(); document.addEventListener('click', this.onDocClick); document.addEventListener('keydown', this.onKey); this.applyLang(); this.observaReveal(); this.segueCampo(); this.carregaImoveis().then(() => this.carregaLeads()); }
+  componentDidMount() { setTimeout(() => this.syncMaps(), 400); this._r = () => { const w = window.innerWidth; if (w !== this.state.w) this.setState({ w }); }; window.addEventListener('resize', this._r); this._r(); document.addEventListener('click', this.onDocClick); document.addEventListener('keydown', this.onKey); window.addEventListener('popstate', this.onPopState); history.replaceState({ route: this.state.route, pid: this.state.pid, leadId: this.state.leadId }, '', location.href); this._lastNavRoute = this.state.route; this._lastNavPid = this.state.pid; this._lastNavLeadId = this.state.leadId; this.applyLang(); this.observaReveal(); this.segueCampo(); this.carregaImoveis().then(() => this.carregaLeads()); }
 
 async carregaImoveis() {
   try {
@@ -2385,7 +2385,7 @@ async salvaLead(id, patch) {
   }
 }
 
-  componentWillUnmount() { if (this._io) this._io.disconnect(); window.removeEventListener('resize', this._r); document.removeEventListener('click', this.onDocClick); document.removeEventListener('keydown', this.onKey); if (this._raf) cancelAnimationFrame(this._raf); clearTimeout(this._t); }
+  componentWillUnmount() { if (this._io) this._io.disconnect(); window.removeEventListener('resize', this._r); document.removeEventListener('click', this.onDocClick); document.removeEventListener('keydown', this.onKey); window.removeEventListener('popstate', this.onPopState); if (this._raf) cancelAnimationFrame(this._raf); clearTimeout(this._t); }
   headerH() { const h = document.querySelector('header'); return (h ? h.getBoundingClientRect().height : 72) + 22; }
   scrollToId = (id) => {
     requestAnimationFrame(() => {
@@ -2395,6 +2395,12 @@ async salvaLead(id, patch) {
     });
   };
   toTop() { requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: 'auto' })); }
+  onPopState = (e) => {
+    const st = e.state || { route: 'home' };
+    this._navFromPop = true;
+    this.setState({ route: st.route || 'home', pid: st.pid != null ? st.pid : this.state.pid, leadId: st.leadId != null ? st.leadId : this.state.leadId, zoom: false, navOpen: false, drop: '' });
+    this.toTop();
+  };
   scrollBusca = () => this.scrollToId('busca');
   toggleNav = () => this.setState(s => ({ navOpen: !s.navOpen }));
   brl(n) { return 'R$ ' + Number(n).toLocaleString('pt-BR'); }
@@ -2983,10 +2989,17 @@ const res = await fetch('https://api.web3forms.com/submit', {
       }
     }
   }
-  componentDidUpdate() {
+    componentDidUpdate() {
     this.syncMaps(); this.applyLang(); this.focoCamada();
     this.segueCampo();
     requestAnimationFrame(() => this.observaReveal());
+    if (!this._navFromPop) {
+      if (this._lastNavRoute !== this.state.route || this._lastNavPid !== this.state.pid || this._lastNavLeadId !== this.state.leadId) {
+        history.pushState({ route: this.state.route, pid: this.state.pid, leadId: this.state.leadId }, '', location.href);
+      }
+    }
+    this._navFromPop = false;
+    this._lastNavRoute = this.state.route; this._lastNavPid = this.state.pid; this._lastNavLeadId = this.state.leadId;
   }
 
   fileRef = React.createRef();
