@@ -3104,20 +3104,130 @@ const res = await fetch('https://api.web3forms.com/submit', {
       }
     };
   }
+  // Foto que já veio do banco (id 'f…' de rowParaProp ou 'p…' da capa): não é reenviada nem convertida.
+  fotoJaSalva(ft) { return /^[fp]/.test(String(ft.id)); }
+  erroFoto(msg, causa) { const e = new Error(msg); e.fotoErro = true; e.causa = causa; return e; }
+  comprimeFoto(dataUrl) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const max = 2400, lado = Math.max(img.naturalWidth, img.naturalHeight) || 1, k = Math.min(1, max / lado);
+        const c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(img.naturalWidth * k));
+        c.height = Math.max(1, Math.round(img.naturalHeight * k));
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, c.width, c.height); // PNG transparente vira fundo branco no JPEG
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        c.toBlob(b => b ? resolve(b) : reject(new Error('não foi possível comprimir a imagem')), 'image/jpeg', 0.85);
+      };
+      img.onerror = () => reject(new Error('não foi possível ler a imagem'));
+      img.src = dataUrl;
+    });
+  }
+  async enviaFotoStorage(imovelId, ft, indice, carimbo) {
+    const blob = await this.comprimeFoto(ft.url);
+    const caminho = imovelId + '/' + carimbo + '-' + indice + '.jpg';
+    const { error } = await supabaseClient.storage.from('imoveis').upload(caminho, blob, { contentType: 'image/jpeg', upsert: true });
+    if (error) throw error;
+    const { data } = supabaseClient.storage.from('imoveis').getPublicUrl(caminho);
+    return data.publicUrl;
+  }
   async salvarFotos(imovelId) {
-    await supabaseClient.from('imovel_fotos').delete().eq('imovel_id', imovelId);
-    if (this.state.fotos.length) {
-      const linhas = this.state.fotos.map((foto, i) => ({ imovel_id: imovelId, arquivo: foto.url, ordem: i, capa: i === 0 }));
-      const { error } = await supabaseClient.from('imovel_fotos').insert(linhas);
-      if (error) throw error;
+    const fotos = this.state.fotos;
+    const carimbo = Date.now();
+    const urls = {}; // índice da foto -> URL pública no Storage
+    const novas = fotos.map((ft, i) => ({ ft, i })).filter(x => !this.fotoJaSalva(x.ft) && String(x.ft.url).indexOf('data:') === 0);
+    const total = novas.length;
+    let feitas = 0, pendentes = novas, ultimoErro = null;
+
+    // até 3 rodadas: a primeira e mais 2 tentativas só com as que falharam
+    for (let rodada = 0; rodada < 3 && pendentes.length; rodada++) {
+      const falharam = [];
+      for (let k = 0; k < pendentes.length; k += 4) {
+        const lote = pendentes.slice(k, k + 4);
+        const res = await Promise.allSettled(lote.map(x => this.enviaFotoStorage(imovelId, x.ft, x.i, carimbo)));
+        res.forEach((r, j) => {
+          if (r.status === 'fulfilled') {
+            urls[lote[j].i] = r.value;
+            feitas++;
+            this.setState({ fotoProg: 'Enviando fotos ' + feitas + ' de ' + total + '…' });
+          } else {
+            ultimoErro = r.reason;
+            console.error('Falha ao enviar a foto ' + (lote[j].i + 1) + ' (rodada ' + (rodada + 1) + '):', r.reason);
+            falharam.push(lote[j]);
+          }
+        });
+      }
+      pendentes = falharam;
     }
+    if (pendentes.length) {
+      const msg = (ultimoErro && (ultimoErro.message || ultimoErro.error)) || 'erro desconhecido';
+      // interrompe sem gravar nada em imovel_fotos: as linhas atuais continuam intactas
+      throw this.erroFoto(pendentes.length + (pendentes.length === 1 ? ' foto não pôde ser enviada' : ' fotos não puderam ser enviadas') + ' depois de 3 tentativas. Erro do Supabase: ' + msg, ultimoErro);
+    }
+
+    this.setState({ fotoProg: 'Salvando fotos…' });
+    const { data: antigas, error: errSel } = await supabaseClient.from('imovel_fotos').select('id, ordem, capa').eq('imovel_id', imovelId);
+    if (errSel) { console.error('Erro ao ler as fotos atuais:', errSel); throw this.erroFoto('Não foi possível ler as fotos atuais: ' + errSel.message, errSel); }
+    const atuais = {};
+    (antigas || []).forEach(r => { atuais[String(r.id)] = r; });
+
+    // 1. linhas que já existem (id "f…"): só atualiza ordem/capa, e só se mudou
+    const mantidas = [];
+    for (let i = 0; i < fotos.length; i++) {
+      const ft = fotos[i];
+      if (String(ft.id).charAt(0) !== 'f') continue;
+      const dbId = String(ft.id).slice(1);
+      const atual = atuais[dbId];
+      if (!atual) continue; // linha não existe mais no banco: não há o que atualizar
+      mantidas.push(dbId);
+      const ordem = i, capa = i === 0;
+      if (atual.ordem === ordem && atual.capa === capa) continue;
+      const { error } = await supabaseClient.from('imovel_fotos').update({ ordem, capa }).eq('id', atual.id);
+      if (error) { console.error('Erro ao atualizar a ordem da foto ' + dbId + ':', error); throw this.erroFoto('Não foi possível atualizar a ordem das fotos: ' + error.message, error); }
+    }
+
+    // 2. insere só as novas (Storage) e as legadas "p…" (sem linha própria), em lotes de 10
+    const inserir = [];
+    fotos.forEach((ft, i) => {
+      const id = String(ft.id);
+      if (id.charAt(0) === 'f') return;
+      const arquivo = id.charAt(0) === 'p' ? ft.url : urls[i]; // legada mantém o valor exatamente como está
+      if (!arquivo) return;
+      inserir.push({ fotoId: ft.id, linha: { imovel_id: imovelId, arquivo, ordem: i, capa: i === 0 } });
+    });
+    for (let k = 0; k < inserir.length; k += 10) {
+      const lote = inserir.slice(k, k + 10);
+      this.setState({ fotoProg: 'Salvando fotos ' + Math.min(k + lote.length, inserir.length) + ' de ' + inserir.length + '…' });
+      const { data, error } = await supabaseClient.from('imovel_fotos').insert(lote.map(x => x.linha)).select('id');
+      if (error) { console.error('Erro ao inserir fotos em imovel_fotos:', error); throw this.erroFoto('Não foi possível salvar as fotos: ' + error.message, error); }
+      if ((data || []).length !== lote.length) {
+        console.error('Inserção de fotos incompleta:', { esperadas: lote.length, inseridas: (data || []).length });
+        throw this.erroFoto('O banco confirmou ' + (data || []).length + ' de ' + lote.length + ' fotos do lote. As fotos anteriores foram mantidas.', null);
+      }
+      // lote confirmado: essas fotos passam a ser linhas existentes ('f' + id) com a URL salva,
+      // para uma nova tentativa não reenviar nem reinserir
+      const salvas = {};
+      lote.forEach((x, j) => { salvas[x.fotoId] = { id: 'f' + data[j].id, url: x.linha.arquivo }; });
+      this.setState(s => ({ fotos: s.fotos.map(ft => salvas[ft.id] ? { ...ft, ...salvas[ft.id] } : ft) }));
+    }
+
+    // 3. só depois de inserts e updates confirmados: apaga as que a usuária removeu no painel
+    const remover = (antigas || []).map(r => r.id).filter(id => mantidas.indexOf(String(id)) === -1);
+    if (remover.length) {
+      const { error } = await supabaseClient.from('imovel_fotos').delete().in('id', remover);
+      if (error) { console.error('Erro ao remover fotos excluídas de imovel_fotos:', error); throw this.erroFoto('As fotos foram salvas, mas não foi possível remover as que você excluiu: ' + error.message, error); }
+    }
+    this.setState({ fotoProg: '' });
   }
     async commit(status, msg) {
     if (this.state.salvando) return;
     this.setState({ salvando: true });
-    const row = this.buildRow(status);
+    let imovelId = this.state.editing;
+    // imóvel novo a publicar (ou nova tentativa dele): grava como Rascunho e só publica depois das fotos
+    const publicarDepois = status === 'Publicado' && (!imovelId || imovelId === this._publicarDepois);
+    const row = this.buildRow(publicarDepois ? 'Rascunho' : status);
     try {
-      let imovelId = this.state.editing;
       if (imovelId) {
         const { error } = await supabaseClient.from('imoveis').update(row).eq('id', imovelId);
         if (error) throw error;
@@ -3125,14 +3235,22 @@ const res = await fetch('https://api.web3forms.com/submit', {
         const { data, error } = await supabaseClient.from('imoveis').insert(row).select().single();
         if (error) throw error;
         imovelId = data.id;
+        this.setState({ editing: imovelId }); // se as fotos falharem, a nova tentativa atualiza este imóvel em vez de criar outro
       }
+      if (publicarDepois) this._publicarDepois = imovelId;
       await this.salvarFotos(imovelId);
+      if (publicarDepois) {
+        const { error } = await supabaseClient.from('imoveis').update({ status: 'Publicado' }).eq('id', imovelId);
+        if (error) { console.error('Erro ao publicar o imóvel:', error); throw this.erroFoto('As fotos foram salvas, mas não foi possível publicar: ' + error.message + ' O imóvel ficou como Rascunho.', error); }
+        this._publicarDepois = null;
+      }
       await this.carregaImoveis();
       this.setState({ route: 'admin', adminTab: status === 'Publicado' ? 'Publicados' : 'Rascunhos', editing: null, step: 1, warn: '', salvando: false });
       this.toast(msg);
     } catch (e) {
       console.error('Erro ao salvar imóvel no Supabase:', e);
-      this.setState({ warn: 'Não foi possível salvar no banco de dados. Tente novamente.', salvando: false });
+      const aviso = e && e.fotoErro ? e.message + (publicarDepois && !/Rascunho\.$/.test(e.message) ? ' O imóvel foi salvo como Rascunho e não foi publicado.' : '') : 'Não foi possível salvar no banco de dados. Tente novamente.';
+      this.setState({ warn: aviso, salvando: false, fotoProg: '' });
     }
   }
   saveDraft = () => this.commit('Rascunho', 'Rascunho salvo. Ele não aparece no site.');
@@ -3151,7 +3269,7 @@ const res = await fetch('https://api.web3forms.com/submit', {
       this.toast('Alterações salvas.');
     } catch (e) {
       console.error('Erro ao salvar alterações no Supabase:', e);
-      this.setState({ salvando: false, warn: 'Não foi possível salvar. Tente novamente.' });
+      this.setState({ salvando: false, fotoProg: '', warn: e && e.fotoErro ? e.message : 'Não foi possível salvar. Tente novamente.' });
     }
   };
   publishNew = () => {
@@ -3541,8 +3659,8 @@ const res = await fetch('https://api.web3forms.com/submit', {
       setZoom: this.setAdj('zoom'), setX: this.setAdj('x'), setY: this.setAdj('y'), rotate: this.rotate, adjCancel: this.adjCancel, adjApply: this.adjApply,
       nextStep: this.next, prevStep: this.prev, saveDraft: this.saveDraft, publishNew: this.publishNew,
       mostrarSalvarEdicao: !!s.editing, salvarEdicao: this.salvarEdicao,
-      salvarEdicaoLabel: s.salvando ? 'Salvando…' : 'Salvar alterações', salvarEdicaoDisabled: !!s.salvando,
-      wizardSalvando: !!s.salvando, wizardBtnLabel: s.salvando ? 'Salvando…' : 'Publicar imóvel', wizardBtnRascunhoLabel: s.salvando ? 'Salvando…' : 'Salvar rascunho',
+      salvarEdicaoLabel: s.salvando ? (s.fotoProg || 'Salvando…') : 'Salvar alterações', salvarEdicaoDisabled: !!s.salvando,
+      wizardSalvando: !!s.salvando, wizardBtnLabel: s.salvando ? (s.fotoProg || 'Salvando…') : 'Publicar imóvel', wizardBtnRascunhoLabel: s.salvando ? (s.fotoProg || 'Salvando…') : 'Salvar rascunho',
       wizardWarn: !!s.warn, wizardWarnMsg: s.warn,
       previewFotoSrc: s.fotos.length ? s.fotos[0].url : '', previewTemFoto: s.fotos.length > 0, previewSemFoto: s.fotos.length === 0,
       previewFotoTransform: s.fotos.length ? this.fotoTransform(s.fotos[0]) : 'none',
