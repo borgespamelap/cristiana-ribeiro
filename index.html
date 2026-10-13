@@ -714,7 +714,7 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 </sc-if>
 <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;margin-bottom:56px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch">
 <sc-for list="{{ p.gallery }}" as="g" hint-placeholder-count="5">
-<button onClick="{{ g.select }}" aria-label="{{ g.aria }}" aria-current="{{ g.cur }}" style="flex:0 0 auto;scroll-snap-align:start;width:132px;height:88px;padding:0;border:1px solid {{ g.border }};border-radius:2px;overflow:hidden;background:#EFE8DC;position:relative">
+<button onClick="{{ g.select }}" data-gal-i="{{ g.i }}" aria-label="{{ g.aria }}" aria-current="{{ g.cur }}" style="flex:0 0 auto;scroll-snap-align:start;width:132px;height:88px;padding:0;border:1px solid {{ g.border }};border-radius:2px;overflow:hidden;background:#EFE8DC;position:relative">
 <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:ui-monospace,Menlo,monospace;font-size:9.5px;color:#6E6157;text-align:center;padding:6px;background-image:url({{ g.photoCss }}),repeating-linear-gradient(135deg,#E7DED1 0 10px,#EFE8DC 10px 20px);background-size:cover;background-position:50% 50%">
 <sc-if value="{{ g.isUpload }}" hint-placeholder-val="{{ false }}">
 <img src="{{ g.photoSrc }}" alt="{{ g.label }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
@@ -2436,8 +2436,22 @@ async salvaLead(id, patch) {
   go = (route) => () => { this.setState({ route, zoom: false, navOpen: false, drop: '', painel: false }); this.toTop(); };
   toast(msg) { clearTimeout(this._t); this.setState({ toast: msg }); this._t = setTimeout(() => this.setState({ toast: '' }), 3200); }
   open = (id) => () => { this.setState({ route: 'detail', pid: id, gi: 0, zoom: false, navOpen: false }); this.toTop(); };
-  galN = 5;
-  gStep = (d) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState(s => ({ gi: (s.gi + d + this.galN) % this.galN })); };
+  galTotal() {
+    const p = this.state.props.find(x => x.id === this.state.pid) || this.state.props[0];
+    return Math.max(1, p && p.fotos ? p.fotos.length : 0);
+  }
+  mostraMiniatura(i) {
+    requestAnimationFrame(() => {
+      const el = document.querySelector('[data-gal-i="' + i + '"]');
+      const faixa = el && el.parentElement;
+      if (!faixa) return;
+      const a = el.offsetLeft - faixa.offsetLeft, b = a + el.offsetWidth;
+      if (a < faixa.scrollLeft) faixa.scrollTo({ left: a, behavior: 'smooth' });
+      else if (b > faixa.scrollLeft + faixa.clientWidth) faixa.scrollTo({ left: b - faixa.clientWidth, behavior: 'smooth' });
+    });
+  }
+  irParaFoto(i) { const n = this.galTotal(); const gi = ((i % n) + n) % n; this.setState({ gi }); this.mostraMiniatura(gi); }
+  gStep = (d) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.irParaFoto(this.state.gi + d); };
   touchStart = (e) => { this._tx = e.touches && e.touches[0] ? e.touches[0].clientX : null; };
   touchEnd = (e) => {
     if (e && e.stopPropagation) e.stopPropagation();
@@ -2446,7 +2460,7 @@ async salvaLead(id, patch) {
     const d = end - this._tx;
     this._tx = null;
     if (Math.abs(d) < 40) return;
-    this.setState(s => ({ gi: (s.gi + (d < 0 ? 1 : -1) + this.galN) % this.galN }));
+    this.irParaFoto(this.state.gi + (d < 0 ? 1 : -1));
   };
 
       skeletonCard() {
@@ -3323,7 +3337,10 @@ const res = await fetch('https://api.web3forms.com/submit', {
     const nAtivos = this.ativos();
     const results = this.filtered();
     const fin = s.f.finalidade === 'Alugar' ? 'Aluguel' : 'Venda';
-    const galleryPhoto = s.gi === 0 ? p.photo : null;
+    const galFotos = (p.fotos || []).filter(ft => ft && ft.url);
+    const galN = Math.max(1, galFotos.length);
+    const galGi = Math.min(s.gi, galN - 1);
+    const galleryPhoto = galFotos.length ? galFotos[galGi].url : null;
     const byStatus = st => s.props.filter(x => x.status === st);
     const rows = s.adminTab === 'Todos' ? s.props : byStatus(s.adminTab.replace('Publicados', 'Publicado').replace('Rascunhos', 'Rascunho').replace('Arquivados', 'Arquivado'));
     const stepLabels = ['1. Básico', '2. Localização', '3. Características', '4. Valores', '5. Fotos', '6. Descrição', '7. Revisão'];
@@ -3497,21 +3514,23 @@ const res = await fetch('https://api.web3forms.com/submit', {
         categoria: p.categoria || Component.catDeTipo(p.tipo),
         tipoFinalidade: (p.categoria || Component.catDeTipo(p.tipo)) + ' · ' + p.tipo + ' · ' + (p.fin === 'Aluguel' ? 'Para alugar' : 'Para comprar'),
         precoFmt: this.precoFmt(p), ref: 'CR-' + String(p.id).padStart(4, '0'),
-        photo: galleryPhoto, photoCss: this.css(galleryPhoto), photoSrc: galleryPhoto, isUpload: this.isUp(galleryPhoto), hasPhoto: !!galleryPhoto, noPhoto: !galleryPhoto,
-        phMain: 'FOTO · ' + (gLabels[s.gi] || 'AMBIENTE').toUpperCase(),
+        photo: galleryPhoto, photoCss: this.css(galleryPhoto), photoSrc: galleryPhoto, isUpload: !!galleryPhoto, hasPhoto: !!galleryPhoto, noPhoto: !galleryPhoto,
+        phMain: 'FOTO · ' + gLabels[0].toUpperCase(),
         stats: this.statsDe(p),
         desc1: p.desc1, desc2: p.desc2, difs: p.difs,
         fin: [{ k: p.fin === 'Aluguel' ? 'Aluguel mensal' : 'Valor de venda', v: this.precoFmt(p) }, { k: 'Condomínio', v: p.cond ? this.brl(p.cond) + '/mês' : 'não se aplica' }, { k: 'IPTU', v: p.iptu ? this.brl(p.iptu) + '/mês' : 'não informado' }],
         galKey: this.galKey, zoomKey: this.ativaTeclado(() => this.setState({ zoom: true })),
-        galAria: this.tr('Galeria do imóvel') + ': ' + p.titulo + ' — ' + this.tr('foto') + ' ' + (s.gi + 1) + '/' + gLabels.length,
-        gallery: gLabels.map((label, i) => ({ label, aria: this.tr('Ver foto') + ' ' + (i + 1) + ': ' + label, cur: s.gi === i ? 'true' : 'false', select: () => this.setState({ gi: i }), photo: i === 0 ? p.photo : null, photoCss: this.css(i === 0 ? p.photo : null), photoSrc: i === 0 ? p.photo : null, isUpload: i === 0 && this.isUp(p.photo), hasPhoto: i === 0 && !!p.photo, noPhoto: !(i === 0 && !!p.photo), border: s.gi === i ? '#9C6444' : '#DED4C6' })),
+        galAria: this.tr('Galeria do imóvel') + ': ' + p.titulo + ' — ' + this.tr('foto') + ' ' + (galGi + 1) + '/' + galN,
+        gallery: galFotos.length
+          ? galFotos.map((ft, i) => ({ i, label: '', aria: this.tr('Ver foto') + ' ' + (i + 1) + ' de ' + galN, cur: galGi === i ? 'true' : 'false', select: () => this.irParaFoto(i), photo: ft.url, photoCss: this.css(ft.url), photoSrc: ft.url, isUpload: true, hasPhoto: true, noPhoto: false, border: galGi === i ? '#9C6444' : '#DED4C6' }))
+          : [{ i: 0, label: gLabels[0], aria: this.tr('Ver foto') + ' 1: ' + gLabels[0], cur: 'true', select: () => this.setState({ gi: 0 }), photo: null, photoCss: this.css(null), photoSrc: null, isUpload: false, hasPhoto: false, noPhoto: true, border: '#9C6444' }],
         related: s.props.filter(x => x.status === 'Publicado' && x.id !== p.id).slice(0, 3).map(x => ({ titulo: x.titulo, bairro: x.bairro, precoFmt: this.precoFmt(x), open: this.open(x.id) })),
         interest: this.interest(p.titulo), visit: this.visit(p.titulo),
         zoom: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ zoom: true }); },
         prev: this.gStep(-1), next: this.gStep(1), prevStop: this.gStep(-1), nextStop: this.gStep(1),
         touchStart: this.touchStart, touchEnd: this.touchEnd,
-        contadorLongo: 'Foto ' + (s.gi + 1) + ' de ' + gLabels.length,
-        showArrows: s.w >= 768, mobileHint: s.w < 768, contador: (s.gi + 1) + ' / ' + gLabels.length,
+        contadorLongo: 'Foto ' + (galGi + 1) + ' de ' + galN,
+        showArrows: s.w >= 768 && galN > 1, mobileHint: s.w < 768 && galN > 1, contador: (galGi + 1) + ' / ' + galN,
         gmapsHref: this.gmaps(this.endereco(p).busca),
         endRua: this.endereco(p).rua, endTemRua: this.endereco(p).temRua,
         endCompl: this.endereco(p).compl, endTemCompl: !!this.endereco(p).compl,
