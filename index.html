@@ -119,7 +119,7 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 <sc-if value="{{ navFull }}" hint-placeholder-val="{{ true }}">
 <div style="display:flex;align-items:center;gap:clamp(28px,3.2vw,48px);margin-left:auto;flex-wrap:wrap">
 <nav aria-label="Menu principal" style="display:flex;align-items:center;gap:22px;flex-wrap:wrap">
-<button onClick="{{ go.imoveis }}" style="background:none;border:0;border-bottom:1px solid {{ navImoveisLine }};padding:0 0 4px;font-size:14px;font-weight:{{ navImoveisW }};color:{{ navImoveisFg }}" aria-current="{{ navImoveisCur }}" style-hover="color:#8C5636">Imóveis</button>
+<button onClick="{{ go.imoveisTodos }}" style="background:none;border:0;border-bottom:1px solid {{ navImoveisLine }};padding:0 0 4px;font-size:14px;font-weight:{{ navImoveisW }};color:{{ navImoveisFg }}" aria-current="{{ navImoveisCur }}" style-hover="color:#8C5636">Imóveis</button>
 <button onClick="{{ go.comprar }}" style="background:none;border:0;border-bottom:1px solid {{ navComprarLine }};padding:0 0 4px;font-size:14px;font-weight:{{ navComprarW }};color:{{ navComprarFg }}" aria-current="{{ navComprarCur }}" style-hover="color:#8C5636">Comprar</button>
 <button onClick="{{ go.alugar }}" style="background:none;border:0;border-bottom:1px solid {{ navAlugarLine }};padding:0 0 4px;font-size:14px;font-weight:{{ navAlugarW }};color:{{ navAlugarFg }}" aria-current="{{ navAlugarCur }}" style-hover="color:#8C5636">Alugar</button>
 <button onClick="{{ go.sobre }}" style="background:none;border:0;border-bottom:1px solid {{ navSobreLine }};padding:0 0 4px;font-size:14px;font-weight:{{ navSobreW }};color:{{ navSobreFg }}" aria-current="{{ navSobreCur }}" style-hover="color:#8C5636">Sobre</button>
@@ -144,7 +144,7 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 <span style="font-size:12px;color:#C6B9A7">·</span>
 <button onClick="{{ setEn }}" style="background:none;border:0;padding:8px 4px;font-size:14px;letter-spacing:0.14em;font-weight:{{ enWeight }};color:{{ enFg }};min-height:44px">EN</button>
 </div>
-<button onClick="{{ go.imoveis }}" style="background:none;border:0;text-align:left;padding:15px 2px;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:22px;color:#241E19;border-bottom:1px solid #EAE1D4;min-height:48px">Imóveis</button>
+<button onClick="{{ go.imoveisTodos }}" style="background:none;border:0;text-align:left;padding:15px 2px;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:22px;color:#241E19;border-bottom:1px solid #EAE1D4;min-height:48px">Imóveis</button>
 <button onClick="{{ go.sobre }}" style="background:none;border:0;text-align:left;padding:15px 2px;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:22px;color:#241E19;border-bottom:1px solid #EAE1D4;min-height:48px">Sobre</button>
 <button onClick="{{ go.servicos }}" style="background:none;border:0;text-align:left;padding:15px 2px;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:22px;color:#241E19;border-bottom:1px solid #EAE1D4;min-height:48px">Serviços</button>
 <button onClick="{{ go.investidores }}" style="background:none;border:0;text-align:left;padding:15px 2px;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:22px;color:#241E19;border-bottom:1px solid #EAE1D4;min-height:48px">Investor Hub</button>
@@ -176,6 +176,7 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 <section style="padding:44px 28px 0">
 <div id="busca" style="max-width:1360px;margin:0 auto;background:#FFFDF9;border:1px solid #DED4C6;border-radius:3px;padding:26px 28px">
 <div style="display:flex;gap:10px;margin-bottom:22px">
+<button onClick="{{ heroAll }}" style="border-radius:999px;padding:8px 20px;font-size:13.5px;letter-spacing:0.02em;font-weight:500;background:{{ allBg }};color:{{ allFg }};border:1px solid #DBCFBE">Todos</button>
 <button onClick="{{ heroBuy }}" style="border-radius:999px;padding:8px 20px;font-size:13.5px;letter-spacing:0.02em;font-weight:500;background:{{ buyBg }};color:{{ buyFg }};border:1px solid #DBCFBE">Comprar</button>
 <button onClick="{{ heroRent }}" style="border-radius:999px;padding:8px 20px;font-size:13.5px;letter-spacing:0.02em;font-weight:500;background:{{ rentBg }};color:{{ rentFg }};border:1px solid #DBCFBE">Alugar</button>
 </div>
@@ -255,7 +256,7 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 <label style="display:flex;flex-direction:column;gap:8px">
 <span style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;font-weight:500;color:#6E6157">Faixa de preço</span>
 <div style="position:relative">
-<button onClick="{{ sel.heroFaixa.toggle }}" aria-haspopup="listbox" aria-expanded="{{ sel.heroFaixa.aberto }}" aria-label="{{ sel.heroFaixa.aria }}" style="background:#F6F2EC;border:1px solid #DED4C6;border-radius:2px;padding:12px 12px;appearance:none;background-image:linear-gradient(45deg,transparent 50%,#6E6157 50%),linear-gradient(135deg,#6E6157 50%,transparent 50%);background-position:calc(100% - 18px) calc(50% - 2px),calc(100% - 13px) calc(50% - 2px);background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px;text-align:left;display:flex;align-items:center;width:100%;font-size:14px;font-weight:500;color:#241E19;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" style-hover="border-color:#C6B9A7">{{ sel.heroFaixa.valor }}</button>
+<button onClick="{{ sel.heroFaixa.toggle }}" disabled="{{ sel.heroFaixa.desativado }}" aria-disabled="{{ sel.heroFaixa.ariaDes }}" aria-haspopup="listbox" aria-expanded="{{ sel.heroFaixa.aberto }}" aria-label="{{ sel.heroFaixa.aria }}" style="background:#F6F2EC;border:1px solid #DED4C6;border-radius:2px;padding:12px 12px;appearance:none;background-image:linear-gradient(45deg,transparent 50%,#6E6157 50%),linear-gradient(135deg,#6E6157 50%,transparent 50%);background-position:calc(100% - 18px) calc(50% - 2px),calc(100% - 13px) calc(50% - 2px);background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px;text-align:left;display:flex;align-items:center;width:100%;font-size:14px;font-weight:500;color:#241E19;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" style-hover="border-color:#C6B9A7"><span style="opacity:{{ sel.heroFaixa.opac }}">{{ sel.heroFaixa.valor }}</span></button>
 <sc-if value="{{ sel.heroFaixa.aberto }}" hint-placeholder-val="{{ false }}">
 <div role="listbox" aria-label="Faixa de preço" data-flutuante="1" style="position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:240;background:#FFFDF9;border:1px solid #DED4C6;border-radius:2px;box-shadow:0 16px 34px rgba(42,34,32,0.14);max-height:300px;overflow:auto;padding:6px">
 <sc-for list="{{ sel.heroFaixa.opts }}" as="o" hint-placeholder-count="4">
@@ -268,7 +269,7 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 </sc-if>
 </div>
 </label>
-<button onClick="{{ go.imoveis }}" style="background:#2A2220;color:#F6F2EC;border:0;border-radius:2px;font-weight:600;padding:14px 26px;font-size:14px;letter-spacing:0.02em" style-hover="background:#9C6444">Buscar imóveis</button>
+<button onClick="{{ go.imoveis }}" style="background:#2A2220;color:#F6F2EC;border:0;border-radius:2px;font-weight:600;padding:13px 26px;font-size:14px;line-height:normal;letter-spacing:0.02em;white-space:nowrap" style-hover="background:#9C6444">Buscar imóveis</button>
 </div>
 </div>
 </section>
@@ -309,7 +310,7 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 </div>
 </div>
 <sc-if value="{{ selo }}" hint-placeholder-val="{{ false }}">
-<span style="position:absolute;top:14px;left:14px;background:rgba(255,253,249,0.92);font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;color:#2A2220;padding:6px 10px">Curadoria</span>
+<span style="position:absolute;top:14px;left:14px;background:rgba(255,253,249,0.92);font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;color:#2A2220;padding:6px 10px">{{ item.finTag }}</span>
 </sc-if>
 </div>
 <div style="padding:22px 22px 24px">
@@ -428,6 +429,7 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 
 <div style="{{ painelCorpo }}">
 <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+<button onClick="{{ heroAll }}" style="border-radius:999px;padding:8px 20px;font-size:13.5px;font-weight:500;background:{{ allBg }};color:{{ allFg }};border:1px solid #DBCFBE">Todos</button>
 <button onClick="{{ heroBuy }}" style="border-radius:999px;padding:8px 20px;font-size:13.5px;font-weight:500;background:{{ buyBg }};color:{{ buyFg }};border:1px solid #DBCFBE">Comprar</button>
 <button onClick="{{ heroRent }}" style="border-radius:999px;padding:8px 20px;font-size:13.5px;font-weight:500;background:{{ rentBg }};color:{{ rentFg }};border:1px solid #DBCFBE">Alugar</button>
 </div>
@@ -477,7 +479,7 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 <label style="display:flex;flex-direction:column;gap:8px">
 <span style="font-size:12px;letter-spacing:0.22em;text-transform:uppercase;font-weight:500;color:#6E6157">Valor</span>
 <div style="position:relative">
-<button onClick="{{ sel.fFaixa.toggle }}" aria-haspopup="listbox" aria-expanded="{{ sel.fFaixa.aberto }}" aria-label="{{ sel.fFaixa.aria }}" style="background:#F6F2EC;border:1px solid #DED4C6;border-radius:2px;padding:11px;appearance:none;min-height:44px;background-image:linear-gradient(45deg,transparent 50%,#6E6157 50%),linear-gradient(135deg,#6E6157 50%,transparent 50%);background-position:calc(100% - 18px) calc(50% - 2px),calc(100% - 13px) calc(50% - 2px);background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px;text-align:left;display:flex;align-items:center;width:100%;font-size:14px;font-weight:500;color:#241E19;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" style-hover="border-color:#C6B9A7">{{ sel.fFaixa.valor }}</button>
+<button onClick="{{ sel.fFaixa.toggle }}" disabled="{{ sel.fFaixa.desativado }}" aria-disabled="{{ sel.fFaixa.ariaDes }}" aria-haspopup="listbox" aria-expanded="{{ sel.fFaixa.aberto }}" aria-label="{{ sel.fFaixa.aria }}" style="background:#F6F2EC;border:1px solid #DED4C6;border-radius:2px;padding:11px;appearance:none;min-height:44px;background-image:linear-gradient(45deg,transparent 50%,#6E6157 50%),linear-gradient(135deg,#6E6157 50%,transparent 50%);background-position:calc(100% - 18px) calc(50% - 2px),calc(100% - 13px) calc(50% - 2px);background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px;text-align:left;display:flex;align-items:center;width:100%;font-size:14px;font-weight:500;color:#241E19;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" style-hover="border-color:#C6B9A7"><span style="opacity:{{ sel.fFaixa.opac }}">{{ sel.fFaixa.valor }}</span></button>
 <sc-if value="{{ sel.fFaixa.aberto }}" hint-placeholder-val="{{ false }}">
 <div role="listbox" aria-label="Valor" style="position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:70;background:#FFFDF9;border:1px solid #DED4C6;border-radius:2px;box-shadow:0 16px 34px rgba(42,34,32,0.14);max-height:300px;overflow:auto;padding:6px">
 <sc-for list="{{ sel.fFaixa.opts }}" as="o" hint-placeholder-count="4">
@@ -654,6 +656,9 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 </sc-if>
 </div>
 </div>
+<sc-if value="{{ selo }}" hint-placeholder-val="{{ false }}">
+<span style="position:absolute;top:14px;left:14px;background:rgba(255,253,249,0.92);font-size:9.5px;letter-spacing:0.2em;text-transform:uppercase;color:#2A2220;padding:6px 10px">{{ item.finTag }}</span>
+</sc-if>
 </div>
 <div style="padding:22px 22px 24px">
 <div style="font-size:10.5px;letter-spacing:0.2em;text-transform:uppercase;font-weight:500;color:#6E6157;margin-bottom:12px">{{ item.tipoBairro }}</div>
@@ -670,9 +675,17 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 </sc-if>
 <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
 <div style="background:#FFFDF9;border:1px dashed #DED4C6;border-radius:3px;padding:64px 32px;text-align:center;margin-bottom:20px">
+<sc-if value="{{ semAlt }}" hint-placeholder-val="{{ true }}">
 <h3 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:29px;margin:0 0 12px">Nenhum imóvel com esses filtros.</h3>
+</sc-if>
+<sc-if value="{{ altInfo }}" hint-placeholder-val="{{ false }}">
+<h3 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:29px;margin:0 0 12px">{{ altMsg }}</h3>
+</sc-if>
 <p style="font-size:15.5px;color:#6E6157;margin:0 auto 26px;max-width:44ch">Parte da seleção não é divulgada publicamente. Ajuste a busca ou me diga o que você procura.</p>
 <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+<sc-if value="{{ altInfo }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ altGo }}" style="background:#2A2220;color:#F6F2EC;border:0;border-radius:2px;font-weight:600;padding:12px 22px;font-size:14px">{{ altBtn }}</button>
+</sc-if>
 <button onClick="{{ clearFilters }}" style="background:#2A2220;color:#F6F2EC;border:0;border-radius:2px;font-weight:600;padding:12px 22px;font-size:14px">Limpar filtros</button>
 <button onClick="{{ go.contato }}" style="background:none;border:1px solid #C6B9A7;border-radius:2px;font-weight:600;padding:12px 22px;font-size:14px">Falar com Cristiana</button>
 </div>
@@ -741,16 +754,32 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 </sc-for>
 </div>
 
+<sc-if value="{{ p.temDesc }}" hint-placeholder-val="{{ true }}">
 <h2 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:29px;margin:0 0 18px">Sobre a propriedade</h2>
-<p style="font-size:16.5px;line-height:1.75;color:#4A403A;margin:0 0 16px;max-width:60ch;text-wrap:pretty">{{ p.desc1 }}</p>
-<p style="font-size:16.5px;line-height:1.75;color:#4A403A;margin:0 0 48px;max-width:60ch;text-wrap:pretty">{{ p.desc2 }}</p>
+<div style="display:flex;flex-direction:column;gap:16px;margin:0 0 48px;max-width:60ch">
+<sc-for list="{{ p.descBlocos }}" as="b" hint-placeholder-count="1">
+<sc-if value="{{ b.ehPara }}" hint-placeholder-val="{{ true }}">
+<p style="font-size:16.5px;line-height:1.75;color:#4A403A;margin:0;text-wrap:pretty;white-space:pre-line">{{ b.texto }}</p>
+</sc-if>
+<sc-if value="{{ b.ehLista }}" hint-placeholder-val="{{ false }}">
+<ul style="margin:0;padding:0 0 0 1.2em;display:flex;flex-direction:column;gap:6px;font-size:16.5px;line-height:1.65;color:#4A403A">
+<sc-for list="{{ b.itens }}" as="it" hint-placeholder-count="3">
+<li style="padding-left:4px">{{ it.t }}</li>
+</sc-for>
+</ul>
+</sc-if>
+</sc-for>
+</div>
+</sc-if>
 
+<sc-if value="{{ p.temDifs }}" hint-placeholder-val="{{ true }}">
 <h2 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:29px;margin:0 0 20px">Diferenciais</h2>
 <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:48px">
 <sc-for list="{{ p.difs }}" as="d" hint-placeholder-count="5">
 <span style="background:#FFFDF9;border:1px solid #E5DBCD;border-radius:999px;padding:9px 18px;font-size:13.5px;color:#4A403A">{{ d }}</span>
 </sc-for>
 </div>
+</sc-if>
 
 <h2 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:29px;margin:0 0 20px">Informações financeiras</h2>
 <div style="border-top:1px solid #DED4C6;margin-bottom:48px">
@@ -1128,15 +1157,16 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 <span style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:29px">Cristiana Ribeiro</span>
 </button>
 <div style="font-size:10px;letter-spacing:0.28em;text-transform:uppercase;color:#8C5636;margin-bottom:18px">Área privada</div>
+<sc-if value="{{ modoEntrar }}" hint-placeholder-val="{{ true }}">
 <h1 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:42px;line-height:1.1;margin:0 0 34px">Entrar na sua conta</h1>
 <div style="display:flex;flex-direction:column;gap:18px">
 <label style="display:flex;flex-direction:column;gap:8px">
 <span style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;font-weight:500;color:#6E6157">E-mail</span>
-<input name="email" type="email" autocomplete="username" value="{{ login.email }}" onChange="{{ onLogin }}" placeholder="cristiana@cristianaribeiro.com.br" style="background:#FFFDF9;border:1px solid #DED4C6;border-radius:2px;padding:14px">
+<input name="email" type="email" autocomplete="username" value="{{ login.email }}" onChange="{{ onLogin }}" onKeyDown="{{ loginEmailKey }}" placeholder="cristiana@cristianaribeiro.com.br" style="background:#FFFDF9;border:1px solid #DED4C6;border-radius:2px;padding:14px">
 </label>
 <label style="display:flex;flex-direction:column;gap:8px">
 <span style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;font-weight:500;color:#6E6157">Senha</span>
-<input name="senha" type="password" autocomplete="current-password" value="{{ login.senha }}" onChange="{{ onLogin }}" placeholder="••••••••" style="background:#FFFDF9;border:1px solid #DED4C6;border-radius:2px;padding:14px">
+<input name="senha" type="password" autocomplete="current-password" value="{{ login.senha }}" onChange="{{ onLogin }}" onKeyDown="{{ loginSenhaKey }}" placeholder="••••••••" style="background:#FFFDF9;border:1px solid #DED4C6;border-radius:2px;padding:14px">
 </label>
 <sc-if value="{{ loginErr }}" hint-placeholder-val="{{ false }}">
 <div role="alert" style="background:#F5E7E0;border-left:2px solid #A8503A;padding:12px 14px;font-size:13.5px;color:#7A3A28;display:flex;gap:8px"><span aria-hidden="true" style="font-weight:700">!</span>{{ loginErrMsg }}</div>
@@ -1147,6 +1177,45 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 <button onClick="{{ go.home }}" style="background:none;border:0;padding:0;font-size:13px;color:#6E6157">Voltar ao site</button>
 </div>
 </div>
+</sc-if>
+<sc-if value="{{ modoRecuperar }}" hint-placeholder-val="{{ false }}">
+<h1 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:42px;line-height:1.1;margin:0 0 14px">Recuperar senha</h1>
+<p style="font-size:15px;line-height:1.6;color:#4A403A;margin:0 0 30px">Informe seu e-mail para receber um link de criação de nova senha.</p>
+<div style="display:flex;flex-direction:column;gap:18px">
+<label style="display:flex;flex-direction:column;gap:8px">
+<span style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;font-weight:500;color:#6E6157">E-mail</span>
+<input name="recEmail" type="email" autocomplete="email" value="{{ recEmail }}" onChange="{{ onRecEmail }}" onKeyDown="{{ recKey }}" placeholder="cristiana@cristianaribeiro.com.br" style="background:#FFFDF9;border:1px solid #DED4C6;border-radius:2px;padding:14px">
+</label>
+<sc-if value="{{ recErr }}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="background:#F5E7E0;border-left:2px solid #A8503A;padding:12px 14px;font-size:13.5px;color:#7A3A28;display:flex;gap:8px"><span aria-hidden="true" style="font-weight:700">!</span>{{ recErrMsg }}</div>
+</sc-if>
+<sc-if value="{{ recEnviado }}" hint-placeholder-val="{{ false }}">
+<div role="status" style="background:#FFFDF9;border:1px solid #DED4C6;padding:12px 14px;font-size:13.5px;line-height:1.55;color:#4A403A">Se este e-mail estiver cadastrado, você vai receber um link para criar uma nova senha.</div>
+</sc-if>
+<button onClick="{{ enviaRecuperacao }}" disabled="{{ authEnviando }}" style="background:#2A2220;color:#F6F2EC;border:0;border-radius:2px;font-weight:600;padding:15px;font-size:14.5px" style-hover="background:#9C6444">{{ recBtn }}</button>
+<div style="display:flex;justify-content:space-between;gap:16px;font-size:13px">
+<button onClick="{{ voltaLogin }}" style="background:none;border:0;padding:0;font-size:13px;color:#6E6157">Voltar ao login</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ modoNova }}" hint-placeholder-val="{{ false }}">
+<h1 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:42px;line-height:1.1;margin:0 0 14px">Criar nova senha</h1>
+<p style="font-size:15px;line-height:1.6;color:#4A403A;margin:0 0 30px">Use pelo menos 10 caracteres.</p>
+<div style="display:flex;flex-direction:column;gap:18px">
+<label style="display:flex;flex-direction:column;gap:8px">
+<span style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;font-weight:500;color:#6E6157">Nova senha</span>
+<input name="novaSenha" type="password" autocomplete="new-password" value="{{ novaSenha.a }}" onChange="{{ onNovaSenha }}" onKeyDown="{{ novaSenhaKey }}" style="background:#FFFDF9;border:1px solid #DED4C6;border-radius:2px;padding:14px">
+</label>
+<label style="display:flex;flex-direction:column;gap:8px">
+<span style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;font-weight:500;color:#6E6157">Confirmar senha</span>
+<input name="novaSenha2" type="password" autocomplete="new-password" value="{{ novaSenha.b }}" onChange="{{ onNovaSenha }}" onKeyDown="{{ novaSenhaKey }}" style="background:#FFFDF9;border:1px solid #DED4C6;border-radius:2px;padding:14px">
+</label>
+<sc-if value="{{ novaErr }}" hint-placeholder-val="{{ false }}">
+<div role="alert" style="background:#F5E7E0;border-left:2px solid #A8503A;padding:12px 14px;font-size:13.5px;color:#7A3A28;display:flex;gap:8px"><span aria-hidden="true" style="font-weight:700">!</span>{{ novaErrMsg }}</div>
+</sc-if>
+<button onClick="{{ salvaNovaSenha }}" disabled="{{ authEnviando }}" style="background:#2A2220;color:#F6F2EC;border:0;border-radius:2px;font-weight:600;padding:15px;font-size:14.5px" style-hover="background:#9C6444">{{ novaBtn }}</button>
+</div>
+</sc-if>
 </div>  
 <div style="position:relative;min-height:320px">
 <img src="assets/interior-2.png" alt="Interior" style="width:100%;height:100%;min-height:320px;object-fit:cover;display:block">
@@ -1631,41 +1700,6 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 <div style="font-size:12.5px;color:#6E6157;margin-top:14px">Campos em branco não aparecem no site.</div>
 </sc-if>
 </div>
-
-<div>
-<div style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;font-weight:500;color:#6E6157;margin-bottom:14px">Diferenciais</div>
-<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px">
-<sc-for list="{{ difChips }}" as="d" hint-placeholder-count="8">
-<button onClick="{{ d.toggle }}" role="checkbox" aria-checked="{{ d.sel }}" style="border-radius:999px;padding:9px 18px;font-size:13.5px;font-weight:500;background:{{ d.bg }};color:{{ d.fg }};border:1px solid {{ d.border }};min-height:40px">{{ d.label }}</button>
-</sc-for>
-</div>
-<sc-if value="{{ temDifsProprios }}" hint-placeholder-val="{{ false }}">
-<div style="border-top:1px solid #EAE1D4;padding-top:16px;margin-bottom:16px">
-<div style="font-size:12.5px;color:#6E6157;margin-bottom:12px">Diferenciais adicionados por você</div>
-<div style="display:flex;flex-wrap:wrap;gap:10px">
-<sc-for list="{{ difProprios }}" as="d" hint-placeholder-count="1">
-<span style="display:flex;align-items:center;gap:10px;border-radius:999px;padding:9px 12px 9px 18px;font-size:13.5px;font-weight:500;background:{{ d.bg }};color:{{ d.fg }};border:1px solid {{ d.border }}">
-<button onClick="{{ d.toggle }}" role="checkbox" aria-checked="{{ d.sel }}" style="background:none;border:0;padding:0;font-size:13.5px;font-weight:500;color:inherit;cursor:pointer">{{ d.label }}</button>
-<button onClick="{{ d.remove }}" aria-label="{{ d.ariaRemove }}" style="background:none;border:0;padding:0 2px;font-size:13px;color:inherit;opacity:0.7;cursor:pointer">✕</button>
-</span>
-</sc-for>
-</div>
-</div>
-</sc-if>
-<sc-if value="{{ novoDifAberto }}" hint-placeholder-val="{{ false }}">
-<div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;border-top:1px solid #EAE1D4;padding-top:16px">
-<label style="display:flex;flex-direction:column;gap:8px;flex:1 1 220px">
-<span style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;font-weight:500;color:#6E6157">Novo diferencial</span>
-<input value="{{ novoDif }}" onChange="{{ onNovoDif }}" onKeyDown="{{ novoDifKey }}" placeholder="Automação residencial" style="background:#F6F2EC;border:1px solid #DED4C6;border-radius:2px;padding:13px">
-</label>
-<button onClick="{{ addDif }}" style="background:#2A2220;color:#F6F2EC;border:0;border-radius:2px;padding:13px 20px;font-size:13.5px;font-weight:600;min-height:46px">Adicionar</button>
-<button onClick="{{ cancelDif }}" style="background:none;border:0;padding:13px 4px;font-size:13px;color:#6E6157">Cancelar</button>
-</div>
-</sc-if>
-<sc-if value="{{ novoDifFechado }}" hint-placeholder-val="{{ true }}">
-<button onClick="{{ abreNovoDif }}" style="background:none;border:1px dashed #C6B9A7;border-radius:999px;padding:9px 18px;font-size:13.5px;font-weight:500;color:#4A403A;min-height:40px" style-hover="border-color:#9C6444">+ Adicionar diferencial</button>
-</sc-if>
-</div>
 </div>
 </sc-if>
 
@@ -1732,10 +1766,53 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 <span style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;font-weight:500;color:#6E6157">Descrição do imóvel</span>
 <textarea name="descricao" value="{{ form.descricao }}" onChange="{{ onField }}" rows="8" placeholder="Descreva o imóvel como você o apresentaria em uma visita: implantação, luz, materiais, o que ele resolve." style="background:#F6F2EC;border:1px solid #DED4C6;border-radius:2px;padding:13px;resize:vertical;line-height:1.6"></textarea>
 </label>
+<div style="border-top:1px solid #DED4C6;margin-top:28px;padding-top:48px;display:flex;flex-direction:column;gap:20px">
+<div>
+<h2 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:29px;margin:0 0 6px">Diferenciais</h2>
+<div style="font-size:13px;line-height:1.5;color:#6E6157">Um por linha ou separados por vírgula. De forma curta.</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<textarea value="{{ novoDif }}" onChange="{{ onNovoDif }}" rows="3" aria-label="Diferenciais, um por linha" placeholder="Ex.: Vão livre de 250 m²&#10;Estacionamento frontal&#10;Pátio externo&#10;&#10;ou: Estacionamento, Pátio externo, Mezanino" style="background:#FFFDF9;border:1px solid #DED4C6;border-radius:2px;padding:13px;resize:vertical;line-height:1.6"></textarea>
+<sc-if value="{{ difLongo }}" hint-placeholder-val="{{ false }}">
+<div role="status" style="font-size:12.5px;line-height:1.5;color:#8C5636">Há itens com mais de 60 caracteres. Diferenciais curtos ficam melhores no site.</div>
+</sc-if>
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px 20px">
+<div style="flex:1 1 0;min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;column-gap:14px;row-gap:6px;padding-top:12px">
+<sc-if value="{{ temSugestoes }}" hint-placeholder-val="{{ true }}">
+<span style="font-size:12px;color:#6E6157">Sugestões:</span>
+<sc-for list="{{ difChips }}" as="d" hint-placeholder-count="8">
+<button onClick="{{ d.toggle }}" style="background:none;border:0;padding:2px 0;font-size:12.5px;font-weight:500;color:#8C5636;cursor:pointer;text-decoration:none;text-underline-offset:3px" style-hover="text-decoration:underline">+ {{ d.label }}</button>
+</sc-for>
+</sc-if>
+</div>
+<div style="flex:0 0 auto">
+<button onClick="{{ addDif }}" disabled="{{ criarDesativado }}" aria-disabled="{{ criarAriaDes }}" style="background:none;border:1px solid #2A2220;color:#241E19;border-radius:2px;font-weight:600;padding:12px 22px;font-size:14px;min-height:44px;opacity:{{ criarOpac }}" style-hover="background:#2A2220;color:#F6F2EC">{{ criarLabel }}</button>
+</div>
+</div>
+</div>
+<sc-if value="{{ temDifsProprios }}" hint-placeholder-val="{{ false }}">
+<div ref="{{ difAreaRef }}" style="display:flex;flex-wrap:wrap;gap:10px;max-width:100%;margin-top:4px">
+<sc-for list="{{ difProprios }}" as="d" hint-placeholder-count="1">
+<span draggable="{{ d.arrastavel }}" onDragStart="{{ d.dragStart }}" onDragOver="{{ d.dragOver }}" onDrop="{{ d.drop }}" onDragEnd="{{ d.dragEnd }}" style="display:flex;align-items:center;gap:10px;max-width:100%;min-width:0;border-radius:18px;padding:8px 12px 8px 10px;font-size:13.5px;font-weight:500;background:#2A2220;color:#F6F2EC;border:1px solid {{ d.borda }};opacity:{{ d.opac }};cursor:grab">
+<span aria-hidden="true" style="font-size:12px;opacity:0.6;letter-spacing:-2px;flex-shrink:0">⋮⋮</span>
+<sc-if value="{{ d.editando }}" hint-placeholder-val="{{ false }}">
+<input value="{{ d.valorEdit }}" onChange="{{ d.onEdit }}" onKeyDown="{{ d.editKey }}" onBlur="{{ d.salvaEdit }}" aria-label="Editar diferencial" autofocus="{{ true }}" style="background:#F6F2EC;color:#241E19;border:0;border-radius:2px;padding:4px 8px;font-size:13.5px;min-width:0;width:min(260px,60vw)">
+</sc-if>
+<sc-if value="{{ d.lendo }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ d.abreEdit }}" aria-label="{{ d.ariaEdit }}" style="background:none;border:0;padding:0;font-size:13.5px;font-weight:500;color:inherit;cursor:text;text-align:left;min-width:0;overflow-wrap:anywhere;white-space:normal;line-height:1.4">{{ d.label }}</button>
+</sc-if>
+<button onClick="{{ d.remove }}" aria-label="{{ d.ariaRemove }}" style="background:none;border:0;padding:0 2px;font-size:13px;color:inherit;opacity:0.8;cursor:pointer;flex-shrink:0">×</button>
+</span>
+</sc-for>
+</div>
+</sc-if>
+</div>
+<div style="border-top:1px solid #DED4C6;margin-top:28px;padding-top:48px">
 <label style="display:flex;flex-direction:column;gap:8px">
 <span style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;font-weight:500;color:#6E6157">Observações internas</span>
 <textarea name="notas" value="{{ form.notas }}" onChange="{{ onField }}" rows="3" placeholder="Só você vê este campo." style="background:#F6F2EC;border:1px solid #DED4C6;border-radius:2px;padding:13px;resize:vertical"></textarea>
 </label>
+</div>
 </div>
 </sc-if>
 
@@ -1762,18 +1839,70 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 </div>
 </div>
 </article>
+<sc-if value="{{ revTemDifs }}" hint-placeholder-val="{{ false }}">
+<section aria-label="Diferenciais" style="margin-top:12px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 16px">
+<h3 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:29px;margin:0">Diferenciais</h3>
+<button onClick="{{ irEtapa6 }}" style="background:none;border:0;padding:4px 0;font-size:13px;font-weight:500;color:#8C5636;cursor:pointer;text-decoration:underline;text-underline-offset:3px" style-hover="color:#241E19">Editar</button>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:10px">
+<sc-for list="{{ revDifs }}" as="d" hint-placeholder-count="4">
+<span style="background:#FFFDF9;border:1px solid #E5DBCD;border-radius:999px;padding:9px 18px;font-size:13.5px;color:#4A403A">{{ d }}</span>
+</sc-for>
+</div>
+</section>
+</sc-if>
+<section aria-label="Descrição" style="margin-top:12px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 16px">
+<h3 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:29px;margin:0">Descrição</h3>
+<sc-if value="{{ revTemDesc }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ irEtapa6 }}" style="background:none;border:0;padding:4px 0;font-size:13px;font-weight:500;color:#8C5636;cursor:pointer;text-decoration:underline;text-underline-offset:3px" style-hover="color:#241E19">Editar</button>
+</sc-if>
+</div>
+<sc-if value="{{ revTemDesc }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:12px;max-width:60ch">
+<sc-for list="{{ revDescBlocos }}" as="b" hint-placeholder-count="1">
+<sc-if value="{{ b.ehPara }}" hint-placeholder-val="{{ true }}">
+<p style="font-size:16.5px;line-height:1.75;color:#4A403A;margin:0;text-wrap:pretty;white-space:pre-line">{{ b.texto }}</p>
+</sc-if>
+<sc-if value="{{ b.ehLista }}" hint-placeholder-val="{{ false }}">
+<ul style="margin:0;padding:0 0 0 1.2em;display:flex;flex-direction:column;gap:6px;font-size:16.5px;line-height:1.65;color:#4A403A">
+<sc-for list="{{ b.itens }}" as="it" hint-placeholder-count="3">
+<li style="padding-left:4px">{{ it.t }}</li>
+</sc-for>
+</ul>
+</sc-if>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ revSemDesc }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:baseline;gap:12px;font-size:14.5px;color:#6E6157">
+<span>Sem descrição</span>
+<button onClick="{{ irEtapa6 }}" style="background:none;border:0;padding:4px 0;font-size:13px;font-weight:500;color:#8C5636;cursor:pointer;text-decoration:underline;text-underline-offset:3px" style-hover="color:#241E19">Adicionar</button>
+</div>
+</sc-if>
+</section>
 <sc-if value="{{ wizardWarn }}" hint-placeholder-val="{{ false }}">
 <div role="alert" style="background:#F5E7E0;border-left:2px solid #A8503A;padding:12px 14px;font-size:13.5px;color:#7A3A28;display:flex;gap:8px"><span aria-hidden="true" style="font-weight:700">!</span>{{ wizardWarnMsg }}</div>
 </sc-if>
-<div style="display:flex;gap:12px;flex-wrap:wrap">
+<div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+<sc-if value="{{ w7Novo }}" hint-placeholder-val="{{ true }}">
 <button onClick="{{ saveDraft }}" disabled="{{ wizardSalvando }}" style="background:none;border:1px solid #C6B9A7;border-radius:2px;font-weight:600;padding:14px 24px;font-size:14.5px">{{ wizardBtnRascunhoLabel }}</button>
 <button onClick="{{ publishNew }}" disabled="{{ wizardSalvando }}" style="background:#2A2220;color:#F6F2EC;border:0;border-radius:2px;font-weight:600;padding:14px 26px;font-size:14.5px" style-hover="background:#9C6444">{{ wizardBtnLabel }}</button>
+</sc-if>
+<sc-if value="{{ w7Publicado }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ salvarEdicao }}" disabled="{{ wizardSalvando }}" style="background:#2A2220;color:#F6F2EC;border:0;border-radius:2px;font-weight:600;padding:14px 26px;font-size:14.5px" style-hover="background:#9C6444">{{ salvarEdicaoLabel }}</button>
+<button onClick="{{ despublicarEdicao }}" disabled="{{ wizardSalvando }}" style="background:none;border:0;padding:14px 6px;font-size:13.5px;color:#6E6157;text-decoration:underline;text-underline-offset:3px" style-hover="color:#241E19">Despublicar</button>
+</sc-if>
+<sc-if value="{{ w7Rascunho }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ salvarEdicao }}" disabled="{{ wizardSalvando }}" style="background:none;border:1px solid #C6B9A7;border-radius:2px;font-weight:600;padding:14px 24px;font-size:14.5px">{{ salvarEdicaoLabel }}</button>
+<button onClick="{{ publishNew }}" disabled="{{ wizardSalvando }}" style="background:#2A2220;color:#F6F2EC;border:0;border-radius:2px;font-weight:600;padding:14px 26px;font-size:14.5px" style-hover="background:#9C6444">{{ wizardBtnLabel }}</button>
+</sc-if>
 </div>
 
 
 <div style="display:flex;justify-content:space-between;gap:12px;margin-top:32px;border-top:1px solid #EAE1D4;padding-top:22px">
 <button onClick="{{ prevStep }}" style="background:none;border:1px solid #DED4C6;border-radius:2px;padding:11px 20px;font-size:13.5px;color:#6E6157">Voltar</button>
-<button onClick="{{ saveDraft }}" style="background:none;border:0;padding:11px 8px;font-size:13.5px;color:#6E6157">Salvar rascunho</button>
 </div>
 
   
@@ -1914,16 +2043,16 @@ img[data-reveal=in]{animation:revealImg .8s cubic-bezier(.22,.61,.36,1) both}
 class Component extends DCLogic {
   state = {
     route: 'home', pid: 1, gi: 0, zoom: false, toast: '',
-    f: { finalidade: 'Comprar', categoria: 'Todas as categorias', cidade: 'Todas as cidades', bairros: [], tipos: [], caracs: [], faixa: 'Todos os valores', dorm: 'Qualquer', ban: 'Qualquer', vagas: 'Qualquer', area: 'Qualquer', ord: 'Mais recentes' },
+    f: { finalidade: 'Todos', categoria: 'Todas as categorias', cidade: 'Todas as cidades', bairros: [], tipos: [], caracs: [], faixa: 'Todos os valores', dorm: 'Qualquer', ban: 'Qualquer', vagas: 'Qualquer', area: 'Qualquer', ord: 'Mais recentes' },
     painel: false, drop: '', dropRect: null, lang: 'pt',
     c: { nome: '', fone: '', email: '', interesse: 'Comprar', msg: '' },
     contactErr: '', sent: false, pendente: false, enviando: false, zapHref: '', mailHref: '', sentName: '', interest: '',
     login: { email: '', senha: '' }, loginErr: '', logged: false,
     w: (typeof window !== 'undefined' ? window.innerWidth : 1280), navOpen: false, geo: { status: 'idle' }, geoPubErro: false, dz: false, adjId: null, adj: { zoom: 100, rot: 0, x: 0, y: 0, aspect: 'Livre' },
     adminTab: 'Todos', step: 1, editing: null, warn: '', menuId: null, delId: null, cep: { status: 'idle' },
-    leadId: null, leadQ: '', leadStatus: 'Todos', leadTipo: 'Todos os interesses', notaSalva: true, loginLoading: false,
+    leadId: null, leadQ: '', leadStatus: 'Todos', leadTipo: 'Todos os interesses', notaSalva: true, loginLoading: false, loginModo: 'entrar', recEmail: '', recEnviado: false, recErr: '', novaSenha: { a: '', b: '' }, novaErr: '', authEnviando: false,
     leads: [],
-    extras: false, novoDif: '', novoDifOpen: false, difsProprios: [],
+    extras: false, novoDif: '', novoDifOpen: false, difsProprios: [], difEdit: -1, difEditVal: '', difDrag: -1, difSobre: -1,
     form: { aprox: false, logradouro: '', numero: '', complemento: '', cep: '', estado: 'RS', finalidade: 'Venda', categoria: 'Residencial', tipo: 'Casa', titulo: '', cidade: 'Porto Alegre', bairro: 'Moinhos de Vento', endereco: '', area: '', dorm: '', suites: '', banheiros: '', vagas: '', preco: '', condominio: '', iptu: '', descricao: '', notas: '', difs: [] },
     fotos: [], carregandoImoveis: true,
     props: [],
@@ -1952,7 +2081,8 @@ class Component extends DCLogic {
     'Consultoria imobiliária · Porto Alegre': 'Real estate advisory · Porto Alegre',
     'Consultoria imobiliária · CRECI 40501 F': 'Real estate advisory · CRECI 40501 F',
     'Consultora imobiliária · CRECI 40501 F': 'Real estate advisor · CRECI 40501 F',
-    'Imóveis': 'Properties', 'Comprar': 'Buy', 'Alugar': 'Rent', 'Sobre': 'About', 'Serviços': 'Services',
+    'Imóveis': 'Properties', 'Comprar': 'Buy', 'Alugar': 'Rent', 'Todos': 'All', 'Todos os imóveis': 'All properties', 'À venda': 'For sale', 'Para alugar': 'For rent',
+    'Escolha Comprar ou Alugar': 'Choose Buy or Rent', 'Sobre': 'About', 'Serviços': 'Services',
     'Contato': 'Contact', 'Falar com Cristiana': 'Talk to Cristiana', 'Abrir menu': 'Open menu', 'Idioma': 'Language',
     'Seleção de imóveis · Porto Alegre': 'Curated properties · Porto Alegre',
     'Uma seleção de imóveis para o seu próximo endereço.': 'A curated selection of homes for your next address.',
@@ -2150,6 +2280,7 @@ class Component extends DCLogic {
     'Acompanhamento de receitas, despesas e performance.': 'Tracking of income, expenses and performance.'
   };
   static RULES = [
+    [/^(\d+) (imóveis encontrados|imóvel encontrado)( · (.+))?$/, m => m[1] + (m[2] === 'imóvel encontrado' ? ' property found' : ' properties found') + (m[4] ? ' · ' + m[4].replace(/à venda/, 'for sale').replace(/para alugar/, 'for rent') : '')],
     [/^(\d+) imóveis encontrados para comprar$/, m => m[1] + ' properties found for sale'],
     [/^(\d+) imóvel encontrado para comprar$/, m => m[1] + ' property found for sale'],
     [/^(\d+) imóveis encontrados para alugar$/, m => m[1] + ' properties found for rent'],
@@ -2328,6 +2459,10 @@ class Component extends DCLogic {
     const { data } = await supabaseClient.auth.getSession();
     if (data && data.session) { this.setState({ logged: true }); this.carregaLeads(); }
     const { data: sub } = supabaseClient.auth.onAuthStateChange((evento, session) => {
+      if (evento === 'PASSWORD_RECOVERY') {
+        this.setState({ route: 'login', loginModo: 'nova', novaSenha: { a: '', b: '' }, novaErr: '', navOpen: false });
+        return;
+      }
       const tem = !!session;
       if (tem === this.state.logged) return;
       this.setState({ logged: tem, ...(tem ? {} : { leads: [] }) });
@@ -2360,10 +2495,11 @@ rowParaProp(row, fotosDoImovel) {
     logradouro: row.logradouro, numero: row.numero, complemento: row.complemento,
     area: row.area_privativa || 0, areaTotal: row.area_total || 0, dorm: row.dormitorios || 0, ban: row.banheiros || 0,
     suites: row.suites || 0, vagas: row.vagas || 0, preco: row.valor_venda || 0, cond: row.condominio || 0, iptu: row.iptu || 0,
-    desc1: row.descricao || 'Descrição em elaboração.', desc2: 'Informações complementares fornecidas no atendimento.',
+    desc1: row.descricao || 'Descrição em elaboração.',
     notas: row.observacoes_internas || '', status: row.status, up: row.created_at ? this.fmtData(row.created_at) : 'agora',
     fotos, photo: fotos.length ? fotos[0].url : null,
-    difs: (extra.difs && extra.difs.length) ? extra.difs : ['Sem diferenciais informados'],
+    // texto antigo salvo em alguns imóveis; é descartado ao carregar
+    difs: (extra.difs || []).filter(d => d && String(d).trim().toLowerCase() !== 'sem diferenciais informados'),
     mobilia: extra.mobilia || 'Não mobiliado', elevador: extra.elevador === true,
     andar: extra.andar || 0, andares: extra.andares || 0, ano: extra.ano || 0, uso: extra.uso || '',
         salas: extra.salas || 0, lavabos: extra.lavabos || 0, aprox: extra.aprox === true
@@ -2472,6 +2608,7 @@ async salvaLead(id, patch) {
       isSkeleton: false, mostrarCard: true,
       tipoBairro: (p.categoria || Component.catDeTipo(p.tipo)) + ' · ' + p.tipo + ' · ' + p.bairro,
       specs: this.specsDe(p), precoFmt: this.precoFmt(p),
+      finTag: this.tr(p.fin === 'Aluguel' ? 'Para alugar' : 'À venda'),
       photo: p.photo, photoCss: this.css(p.photo), photoSrc: p.photo, isUpload: this.isUp(p.photo), hasPhoto: !!p.photo, noPhoto: !p.photo,
       ph: 'FOTO · ' + p.tipo.toUpperCase(), open: this.open(p.id), bairro: p.bairro,
       key: this.ativaTeclado(this.open(p.id)),
@@ -2479,10 +2616,11 @@ async salvaLead(id, patch) {
     };
   }
 
-  filtered() {
+  filtered(outraFinalidade) {
     const f = this.state.f;
-    const fin = f.finalidade === 'Alugar' ? 'Aluguel' : 'Venda';
-    let list = this.state.props.filter(p => p.status === 'Publicado' && p.fin === fin);
+    const finalidade = outraFinalidade || f.finalidade;
+    const fin = finalidade === 'Todos' ? null : (finalidade === 'Alugar' ? 'Aluguel' : 'Venda');
+    let list = this.state.props.filter(p => p.status === 'Publicado' && (!fin || p.fin === fin));
     if (f.categoria !== 'Todas as categorias') list = list.filter(p => (p.categoria || Component.catDeTipo(p.tipo)) === f.categoria);
     if (f.cidade !== 'Todas as cidades') list = list.filter(p => (p.cidade || 'Porto Alegre') === f.cidade);
     if (f.bairros.length) list = list.filter(p => f.bairros.indexOf(p.bairro) > -1);
@@ -2495,7 +2633,8 @@ async salvaLead(id, patch) {
     const bands = fin === 'Venda'
       ? { 'Até R$ 500 mil': [0, 5e5], 'R$ 500 mil – R$ 1 milhão': [5e5, 1e6], 'R$ 1 milhão – R$ 1,5 milhão': [1e6, 1.5e6], 'R$ 1,5 milhão – R$ 2 milhões': [1.5e6, 2e6], 'Acima de R$ 2 milhões': [2e6, 1e12] }
       : { 'Até R$ 5 mil': [0, 5000], 'R$ 5 a 10 mil': [5000, 10000], 'Acima de R$ 10 mil': [10000, 1e9] };
-    if (bands[f.faixa]) list = list.filter(p => p.preco >= bands[f.faixa][0] && p.preco < bands[f.faixa][1]);
+    // com 'Todos' não há faixa; na contagem da outra finalidade a faixa é ignorada (trocar a zera)
+    if (fin && !outraFinalidade && bands[f.faixa]) list = list.filter(p => p.preco >= bands[f.faixa][0] && p.preco < bands[f.faixa][1]);
     if (f.ord === 'Menor valor') list = [...list].sort((a, b) => a.preco - b.preco);
     else if (f.ord === 'Maior valor') list = [...list].sort((a, b) => b.preco - a.preco);
     return list;
@@ -2573,10 +2712,11 @@ async salvaLead(id, patch) {
     });
   };
   limpaChave = (k) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); this._dropClick = true; this.setState(s => ({ f: { ...s.f, [k]: Array.isArray(s.f[k]) ? [] : Component.BASE[k] } })); };
-  mkSel(key, label, valor, opts, apply) {
+  mkSel(key, label, valor, opts, apply, desativado) {
     return {
-      key, label, valor, aberto: this.state.drop === key, aria: label + ': ' + valor,
-      toggle: this.toggleDrop(key),
+      key, label, valor, aberto: !desativado && this.state.drop === key, aria: label + ': ' + valor,
+      desativado: !!desativado, ariaDes: desativado ? 'true' : 'false', opac: desativado ? 0.55 : 1,
+      toggle: desativado ? () => {} : this.toggleDrop(key),
       opts: (opts || []).map(o => ({
         label: o, ariaSel: o === valor ? 'true' : 'false',
         bg: o === valor ? '#F6F2EC' : 'transparent',
@@ -2718,6 +2858,20 @@ const res = await fetch('https://api.web3forms.com/submit', {
   resetC = () => this.setState({ sent: false, pendente: false, enviando: false, interest: '', c: { nome: '', fone: '', email: '', interesse: 'Comprar', msg: '' } });
 
   setLogin = (e) => { const { name, value } = e.target; this.setState(s => ({ login: { ...s.login, [name]: value }, loginErr: '' })); };
+  loginEmailKey = (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    if (this.state.loginLoading) return;
+    if (String(this.state.login.senha || '').trim()) return this.doLogin();
+    const el = document.querySelector('[name="senha"]');
+    if (el) el.focus();
+  };
+  loginSenhaKey = (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    if (this.state.loginLoading) return;
+    this.doLogin();
+  };
   doLogin = async () => {
     const l = this.state.login;
     if (this.state.loginLoading) return;
@@ -2831,9 +2985,77 @@ const res = await fetch('https://api.web3forms.com/submit', {
   }
 }
   investorCta = () => { this.setState(s => ({ route: 'contato', sent: false, interest: 'Investor Hub — consulta de investimento', c: { ...s.c, interesse: 'Investir', msg: this.tr('Gostaria de agendar uma consulta de investimento.') } })); this.paraForm(); this.toast('Consulta de investimento: complete seus dados abaixo.'); };
-  recover = () => this.toast('Para redefinir a senha, entre em contato com o suporte do site.');
+  recover = () => this.setState(s => ({ loginModo: 'recuperar', recEmail: s.login.email || '', recEnviado: false, recErr: '', loginErr: '' }));
+  voltaLogin = () => this.setState({ loginModo: 'entrar', recEnviado: false, recErr: '' });
+  onRecEmail = (e) => this.setState({ recEmail: e.target.value, recErr: '' });
+  recKey = (e) => { if (e.key === 'Enter') { e.preventDefault(); this.enviaRecuperacao(); } };
+  enviaRecuperacao = async () => {
+    if (this.state.authEnviando) return;
+    const email = String(this.state.recEmail || '').trim();
+    if (!email) return this.setState({ recErr: 'Informe seu e-mail.' });
+    this.setState({ authEnviando: true, recErr: '', recEnviado: false });
+    try {
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+      // a mensagem é a mesma exista ou não a conta; erros técnicos só vão para o console
+      if (error) console.error('Erro ao enviar link de recuperação:', error);
+    } catch (e) { console.error('Erro ao enviar link de recuperação:', e); }
+    this.setState({ authEnviando: false, recEnviado: true });
+  };
+  onNovaSenha = (e) => { const { name, value } = e.target; this.setState(s => ({ novaSenha: { ...s.novaSenha, [name === 'novaSenha' ? 'a' : 'b']: value }, novaErr: '' })); };
+  novaSenhaKey = (e) => { if (e.key === 'Enter') { e.preventDefault(); this.salvaNovaSenha(); } };
+  salvaNovaSenha = async () => {
+    if (this.state.authEnviando) return;
+    const { a, b } = this.state.novaSenha;
+    if (!a || a.length < 10) return this.setState({ novaErr: 'A senha precisa ter pelo menos 10 caracteres.' });
+    if (a !== b) return this.setState({ novaErr: 'As senhas não são iguais.' });
+    this.setState({ authEnviando: true, novaErr: '' });
+    try {
+      const { error } = await supabaseClient.auth.updateUser({ password: a });
+      if (error) { console.error('Erro ao alterar senha:', error); return this.setState({ authEnviando: false, novaErr: error.message || String(error) }); }
+      this.setState({ authEnviando: false, loginModo: 'entrar', novaSenha: { a: '', b: '' }, logged: true, route: 'admin' });
+      this.toast('Senha alterada.');
+      this.carregaLeads();
+    } catch (e) {
+      console.error('Erro ao alterar senha:', e);
+      this.setState({ authEnviando: false, novaErr: (e && e.message) || String(e) });
+    }
+  };
 
   static DIFS = ['Piscina', 'Jardim', 'Varanda', 'Espaço gourmet', 'Vista', 'Lareira', 'Terraço', 'Segurança 24h'];
+  static DIFS_COM = ['Estacionamento', 'Vão livre', 'Pé-direito alto', 'Copa/cozinha', 'Vitrine para a rua', 'Mezanino', 'Ar-condicionado', 'Segurança 24h'];
+  static difsSugeridos(cat) { return cat === 'Comercial' ? Component.DIFS_COM : Component.DIFS; }
+  static limpaMarcador(l) { return String(l).replace(/^[\s*\-•]+/, '').trim(); }
+  static ehMarcador(l) { return /^\s*[*\-•]/.test(l); }
+  // descrição pública: parágrafos e quebras como digitados; linhas com *, - ou • viram lista
+  static blocosDescricao(txt) {
+    const linhas = String(txt || '').replace(/\r/g, '').split('\n');
+    const out = []; let para = [], lista = [];
+    const fechaPara = () => { const t = para.join('\n').replace(/^\n+|\n+$/g, ''); if (t.trim()) out.push({ ehPara: true, ehLista: false, texto: t, itens: [] }); para = []; };
+    const fechaLista = () => { if (lista.length) out.push({ ehPara: false, ehLista: true, texto: '', itens: lista.map(t => ({ t })) }); lista = []; };
+    linhas.forEach(l => {
+      if (Component.ehMarcador(l)) { fechaPara(); const t = Component.limpaMarcador(l); if (t) lista.push(t); }
+      else if (!l.trim()) { fechaPara(); fechaLista(); }
+      else { fechaLista(); para.push(l); }
+    });
+    fechaPara(); fechaLista();
+    return out;
+  }
+  // várias linhas preenchidas: uma por item (vírgulas mantidas); uma linha só: separa por vírgula ou ponto e vírgula
+  static separaDifs(txt) {
+    const linhas = String(txt || '').replace(/\r/g, '').split('\n').filter(l => l.trim());
+    const brutos = linhas.length > 1 ? linhas : (linhas[0] || '').split(/[,;]/);
+    const out = [], vistos = {};
+    brutos.forEach(l => {
+      const t = Component.limpaMarcador(l);
+      if (!t || /:\s*$/.test(t)) return;
+      const k = t.toLowerCase();
+      if (vistos[k]) return;
+      vistos[k] = true;
+      out.push(t);
+    });
+    return out;
+  }
+
   static LEAD_STATUS = ['Novo', 'Em Conversa', 'Visita Agendada', 'Fechado', 'Perdido'];
   static LEAD_TIPOS = ['Compra', 'Venda', 'Locação', 'Investimento'];
   static LEAD_CORES = {
@@ -2851,8 +3073,8 @@ const res = await fetch('https://api.web3forms.com/submit', {
     const p = this.state.props.find(x => x.id === id);
     this.setState({
       route: 'wizard', step: 1, editing: id, warn: '', cep: { status: 'idle' },
-      extras: false, novoDif: '', novoDifOpen: false,
-      difsProprios: (p.difs || []).filter(d => Component.DIFS.indexOf(d) === -1 && d !== 'Sem diferenciais informados'),
+      extras: false, novoDif: '', novoDifOpen: false, difEdit: -1, difEditVal: '', difDrag: -1, difSobre: -1,
+      difsProprios: (p.difs || []).filter(d => Component.DIFS.indexOf(d) === -1),
       form: { categoria: p.categoria || Component.catDeTipo(p.tipo), aprox: p.aprox === true,
         areaTotal: p.areaTotal ? String(p.areaTotal) : '', salas: p.salas ? String(p.salas) : '', lavabos: p.lavabos ? String(p.lavabos) : '',
         andar: p.andar ? String(p.andar) : '', andares: p.andares ? String(p.andares) : '', ano: p.ano ? String(p.ano) : '',
@@ -2867,19 +3089,57 @@ const res = await fetch('https://api.web3forms.com/submit', {
   abreNovoDif = () => this.setState({ novoDifOpen: true });
   cancelDif = () => this.setState({ novoDifOpen: false, novoDif: '' });
   onNovoDif = (e) => this.setState({ novoDif: e.target.value });
-  addDif = () => {
-    const v = String(this.state.novoDif || '').trim();
-    if (!v) return;
+  // adiciona cada item como tag; se bater com uma sugestão, usa o nome da sugestão
+  adicionaDifs(txt) {
+    const itens = Component.separaDifs(txt);
     this.setState(s => {
-      const existe = s.difsProprios.concat(Component.DIFS).some(x => x.toLowerCase() === v.toLowerCase());
-      return {
-        difsProprios: existe ? s.difsProprios : [...s.difsProprios, v],
-        form: { ...s.form, difs: s.form.difs.some(x => x.toLowerCase() === v.toLowerCase()) ? s.form.difs : [...s.form.difs, v] },
-        novoDif: '', novoDifOpen: false
-      };
+      const sug = Component.difsSugeridos(s.form.categoria);
+      const difs = [...s.form.difs];
+      itens.forEach(v => {
+        const igual = sug.find(x => x.toLowerCase() === v.toLowerCase()) || v;
+        if (!difs.some(x => x.toLowerCase() === igual.toLowerCase())) difs.push(igual);
+      });
+      return { form: { ...s.form, difs }, novoDif: '', novoDifOpen: false };
     });
+  }
+  difAreaRef = React.createRef();
+  addDif = () => {
+    if (!Component.separaDifs(this.state.novoDif).length) return;
+    this.adicionaDifs(this.state.novoDif);
+    setTimeout(() => {
+      const el = this.difAreaRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      if (r.top < 80 || r.bottom > window.innerHeight) window.scrollTo({ top: window.scrollY + r.top - 100, behavior: 'smooth' });
+    }, 60);
   };
-  novoDifKey = (e) => { if (e.key === 'Enter') { e.preventDefault(); this.addDif(); } };
+  abreDifEdit = (i) => () => this.setState(s => ({ difEdit: i, difEditVal: s.form.difs[i] || '' }));
+  onDifEdit = (e) => this.setState({ difEditVal: e.target.value });
+  salvaDifEdit = () => this.setState(s => {
+    const i = s.difEdit;
+    if (i == null || i < 0) return null;
+    const v = Component.limpaMarcador(s.difEditVal || '');
+    const difs = [...s.form.difs];
+    if (!v) difs.splice(i, 1);
+    else if (difs.some((x, j) => j !== i && x.toLowerCase() === v.toLowerCase())) difs.splice(i, 1);
+    else difs[i] = v;
+    return { form: { ...s.form, difs }, difEdit: -1, difEditVal: '' };
+  });
+  difEditKey = (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); this.salvaDifEdit(); }
+    else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); this.setState({ difEdit: -1, difEditVal: '' }); }
+  };
+  difDragStart = (i) => (e) => { this._difDe = i; this.setState({ difDrag: i }); if (e.dataTransfer) { e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', String(i)); } catch (x) {} } };
+  difDragOver = (i) => (e) => { e.preventDefault(); if (this.state.difSobre !== i) this.setState({ difSobre: i }); };
+  difDrop = (i) => (e) => {
+    e.preventDefault();
+    const de = this._difDe;
+    this._difDe = null;
+    if (de == null || de === i) return this.setState({ difDrag: -1, difSobre: -1 });
+    this.setState(s => { const difs = [...s.form.difs]; const [m] = difs.splice(de, 1); difs.splice(i, 0, m); return { form: { ...s.form, difs }, difDrag: -1, difSobre: -1 }; });
+  };
+  difDragEnd = () => { this._difDe = null; this.setState({ difDrag: -1, difSobre: -1 }); };
+
   removeDif = (d) => (e) => {
     if (e && e.stopPropagation) e.stopPropagation();
     this.setState(s => ({ difsProprios: s.difsProprios.filter(x => x !== d), form: { ...s.form, difs: s.form.difs.filter(x => x !== d) } }));
@@ -3027,7 +3287,7 @@ const res = await fetch('https://api.web3forms.com/submit', {
       this.drawMap('admin', this.adminMapRef.current, s.geo, !s.form.aprox);
     }
     if (s.route === 'detail') {
-      const p = s.props.find(x => x.id === s.pid) || s.props[0] || { id: 0, titulo: '', tipo: 'Casa', bairro: '', categoria: 'Residencial', fin: 'Venda', preco: 0, cond: 0, iptu: 0, area: 0, dorm: 0, suites: 0, ban: 0, vagas: 0, photo: null, fotos: [], status: 'Rascunho', up: '', difs: [], desc1: '', desc2: '', cidade: 'Porto Alegre', estado: 'RS' };
+      const p = s.props.find(x => x.id === s.pid) || s.props[0] || { id: 0, titulo: '', tipo: 'Casa', bairro: '', categoria: 'Residencial', fin: 'Venda', preco: 0, cond: 0, iptu: 0, area: 0, dorm: 0, suites: 0, ban: 0, vagas: 0, photo: null, fotos: [], status: 'Rascunho', up: '', difs: [], desc1: '', cidade: 'Porto Alegre', estado: 'RS' };
       const q = this.endereco(p).busca;
       const fallback = (p.bairro || '') + ', ' + (p.cidade || 'Porto Alegre') + ', ' + (p.estado || 'RS') + ', Brasil';
       const achado = this._geoCache[q] || this._geoCache[fallback];
@@ -3094,6 +3354,30 @@ const res = await fetch('https://api.web3forms.com/submit', {
   adjApply = () => { this.setState(s => ({ fotos: s.fotos.map((ft, k) => k === s.adjId ? { ...ft, ...s.adj } : ft), adjId: null })); this.toast('Ajuste aplicado.'); };
   fotoTransform(ft) { return 'translate(' + ft.x + '%,' + ft.y + '%) scale(' + (ft.zoom / 100) + ') rotate(' + ft.rot + 'deg)'; }
   step = (n) => () => this.setState({ step: n, warn: '' });
+  // primeiras N linhas da descrição, no mesmo formato da página pública
+  static resumoDescricao(txt, max) {
+    const blocos = Component.blocosDescricao(txt), out = [];
+    let resta = max, cortou = false;
+    for (const b of blocos) {
+      if (resta <= 0) { cortou = true; break; }
+      if (b.ehPara) {
+        const ls = b.texto.split('\n');
+        if (ls.length > resta) cortou = true;
+        out.push({ ...b, texto: ls.slice(0, resta).join('\n') });
+        resta -= Math.min(ls.length, resta);
+      } else {
+        if (b.itens.length > resta) cortou = true;
+        out.push({ ...b, itens: b.itens.slice(0, resta) });
+        resta -= Math.min(b.itens.length, resta);
+      }
+    }
+    if (cortou && out.length) {
+      const u = out[out.length - 1];
+      if (u.ehPara) u.texto = u.texto.replace(/[\s.…]*$/, '') + '…';
+      else { const it = u.itens[u.itens.length - 1]; u.itens[u.itens.length - 1] = { t: it.t.replace(/[\s.…]*$/, '') + '…' }; }
+    }
+    return out;
+  }
   next = () => this.setState(s => ({ step: Math.min(7, s.step + 1), warn: '' }));
   prev = () => this.setState(s => ({ step: Math.max(1, s.step - 1), warn: '' }));
 
@@ -3268,6 +3552,11 @@ const res = await fetch('https://api.web3forms.com/submit', {
     }
   }
   saveDraft = () => this.commit('Rascunho', 'Rascunho salvo. Ele não aparece no site.');
+  despublicarEdicao = () => {
+    if (!this.state.editing || this.state.salvando) return;
+    if (!window.confirm('O imóvel vai sair do site. Continuar?')) return;
+    this.commit('Rascunho', 'Imóvel despublicado. Ele não aparece mais no site.');
+  };
     salvarEdicao = async () => {
     if (!this.state.editing || this.state.salvando) return;
     this.setState({ salvando: true });
@@ -3324,7 +3613,7 @@ const res = await fetch('https://api.web3forms.com/submit', {
     const route = s.logged || !protegida ? s.route : 'login';
     const isPublic = ['home', 'imoveis', 'detail', 'sobre', 'servicos', 'contato', 'investidores'].includes(route);
     const mk = k => ({ mRing: k === 'ring', mCircle: k === 'circle', mSquare: k === 'square', mDiamond: k === 'diamond', mBars: k === 'bars' });
-        const p = s.props.find(x => x.id === s.pid) || s.props[0] || { id: 0, titulo: '', tipo: 'Casa', bairro: '', categoria: 'Residencial', fin: 'Venda', preco: 0, cond: 0, iptu: 0, area: 0, dorm: 0, suites: 0, ban: 0, vagas: 0, photo: null, fotos: [], status: 'Rascunho', up: '', difs: [], desc1: '', desc2: '', cidade: 'Porto Alegre', estado: 'RS' };
+        const p = s.props.find(x => x.id === s.pid) || s.props[0] || { id: 0, titulo: '', tipo: 'Casa', bairro: '', categoria: 'Residencial', fin: 'Venda', preco: 0, cond: 0, iptu: 0, area: 0, dorm: 0, suites: 0, ban: 0, vagas: 0, photo: null, fotos: [], status: 'Rascunho', up: '', difs: [], desc1: '', cidade: 'Porto Alegre', estado: 'RS' };
     const gLabels = ['Fachada', 'Sala de estar', 'Cozinha', 'Suíte master', 'Área externa'];
     const uniq = a => Array.from(new Set(a.filter(Boolean))).sort((x, y) => x.localeCompare(y, 'pt-BR'));
     const pub = s.props.filter(x => x.status === 'Publicado');
@@ -3336,7 +3625,10 @@ const res = await fetch('https://api.web3forms.com/submit', {
     const caracOpts = uniq(pub.reduce((acc, x) => acc.concat(x.difs || []), [])).slice(0, 14);
     const nAtivos = this.ativos();
     const results = this.filtered();
-    const fin = s.f.finalidade === 'Alugar' ? 'Aluguel' : 'Venda';
+    const fin = s.f.finalidade === 'Todos' ? null : (s.f.finalidade === 'Alugar' ? 'Aluguel' : 'Venda');
+    const outraFin = s.f.finalidade === 'Comprar' ? 'Alugar' : s.f.finalidade === 'Alugar' ? 'Comprar' : null;
+    const nOutra = outraFin && !s.carregandoImoveis && results.length === 0 ? this.filtered(outraFin).length : 0;
+    const en = s.lang === 'en';
     const galFotos = (p.fotos || []).filter(ft => ft && ft.url);
     const galN = Math.max(1, galFotos.length);
     const galGi = Math.min(s.gi, galN - 1);
@@ -3422,14 +3714,16 @@ const res = await fetch('https://api.web3forms.com/submit', {
           } : null
         };
       })(),
-      go: { home: this.go('home'), imoveis: this.go('imoveis'), sobre: this.go('sobre'), servicos: this.go('servicos'), contato: this.go('contato'), login: this.go('login'), investidores: this.go('investidores'), comprar: () => this.setState(st => ({ route: 'imoveis', f: { ...st.f, finalidade: 'Comprar', faixa: 'Todos os valores' } })), alugar: () => this.setState(st => ({ route: 'imoveis', f: { ...st.f, finalidade: 'Alugar', faixa: 'Todos os valores' } })) },
+      go: { home: this.go('home'), imoveis: this.go('imoveis'), sobre: this.go('sobre'), servicos: this.go('servicos'), contato: this.go('contato'), login: this.go('login'), investidores: this.go('investidores'),
+        imoveisTodos: () => { this.setState(st => ({ route: 'imoveis', zoom: false, navOpen: false, drop: '', painel: false, f: { ...st.f, finalidade: 'Todos', faixa: 'Todos os valores' } })); this.toTop(); },
+        comprar: () => this.setState(st => ({ route: 'imoveis', f: { ...st.f, finalidade: 'Comprar', faixa: 'Todos os valores' } })), alugar: () => this.setState(st => ({ route: 'imoveis', f: { ...st.f, finalidade: 'Alugar', faixa: 'Todos os valores' } })) },
       scrollBusca: this.scrollBusca,
       setPt: this.setLang('pt'), setEn: this.setLang('en'),
       navLabel: s.navOpen ? 'Fechar menu' : 'Abrir menu',
       lbRef: this.lbRef, delRef: this.delRef, adjRef: this.adjRef, painelRef: this.painelRef,
       painelRole: s.w < 768 ? 'dialog' : 'group', painelModal: s.w < 768 ? 'true' : 'false',
       ...(() => {
-        const at = { Imoveis: route === 'imoveis' || route === 'detail', Comprar: false, Alugar: false, Sobre: route === 'sobre', Servicos: route === 'servicos', Contato: route === 'contato' };
+        const at = { Imoveis: route === 'detail' || (route === 'imoveis' && s.f.finalidade === 'Todos'), Comprar: route === 'imoveis' && s.f.finalidade === 'Comprar', Alugar: route === 'imoveis' && s.f.finalidade === 'Alugar', Sobre: route === 'sobre', Servicos: route === 'servicos', Contato: route === 'contato' };
         const o = {};
         Object.keys(at).forEach(k => {
           o['nav' + k + 'Fg'] = at[k] ? '#241E19' : '#6E6157';
@@ -3451,23 +3745,31 @@ const res = await fetch('https://api.web3forms.com/submit', {
         : 'display:grid;grid-template-columns:96px minmax(min(200px,100%),2fr) repeat(auto-fit,minmax(120px,1fr));gap:20px;align-items:center;padding:18px 22px;border-bottom:1px solid #EAE1D4',
       selo: P.selo !== false, mostrarValor: P.mostrarValor !== false,
 
-      f: s.f, heroBuy: this.setFin('Comprar'), heroRent: this.setFin('Alugar'),
+      f: s.f, heroAll: this.setFin('Todos'), heroBuy: this.setFin('Comprar'), heroRent: this.setFin('Alugar'),
+      allBg: !fin ? '#2A2220' : '#F6F2EC', allFg: !fin ? '#F6F2EC' : '#4A403A',
+      faixaDica: !fin,
+      altInfo: nOutra > 0, semAlt: nOutra === 0,
+      altMsg: !nOutra ? '' : en
+        ? 'No properties to ' + (outraFin === 'Alugar' ? 'buy' : 'rent') + ' with these filters. There ' + (nOutra === 1 ? 'is 1' : 'are ' + nOutra) + ' to ' + (outraFin === 'Alugar' ? 'rent' : 'buy') + '.'
+        : 'Nenhum imóvel para ' + (outraFin === 'Alugar' ? 'comprar' : 'alugar') + ' com esses filtros. Há ' + nOutra + ' para ' + (outraFin === 'Alugar' ? 'alugar' : 'comprar') + '.',
+      altBtn: !outraFin ? '' : en ? (outraFin === 'Alugar' ? 'Show rentals' : 'Show properties for sale') : (outraFin === 'Alugar' ? 'Ver imóveis para alugar' : 'Ver imóveis para comprar'),
+      altGo: outraFin ? this.setFin(outraFin) : () => {},
       buyBg: fin === 'Venda' ? '#2A2220' : '#F6F2EC', buyFg: fin === 'Venda' ? '#F6F2EC' : '#4A403A',
       rentBg: fin === 'Aluguel' ? '#2A2220' : '#F6F2EC', rentFg: fin === 'Aluguel' ? '#F6F2EC' : '#4A403A',
       onFilter: this.setF, onFilterOne: this.setOne, clearFilters: this.clear,
       sel: (() => {
-        const faixaO = fin === 'Venda' ? ['Todos os valores', 'Até R$ 500 mil', 'R$ 500 mil – R$ 1 milhão', 'R$ 1 milhão – R$ 1,5 milhão', 'R$ 1,5 milhão – R$ 2 milhões', 'Acima de R$ 2 milhões'] : ['Todos os valores', 'Até R$ 5 mil', 'R$ 5 a 10 mil', 'Acima de R$ 10 mil'];
+        const faixaO = !fin ? ['Todos os valores'] : fin === 'Venda' ? ['Todos os valores', 'Até R$ 500 mil', 'R$ 500 mil – R$ 1 milhão', 'R$ 1 milhão – R$ 1,5 milhão', 'R$ 1,5 milhão – R$ 2 milhões', 'Acima de R$ 2 milhões'] : ['Todos os valores', 'Até R$ 5 mil', 'R$ 5 a 10 mil', 'Acima de R$ 10 mil'];
         const cidadeO = ['Todas as cidades', ...uniq(pub.map(x => x.cidade || 'Porto Alegre'))];
         const setFiltro = (k) => (v) => this.setState(st => ({ f: { ...st.f, [k]: v } }));
         const setCategoria = (v) => this.setState(st => ({ f: { ...st.f, categoria: v, tipos: [] } }));
         const setCampoC = (k) => (v) => this.setC({ target: { name: k, value: v } });
         const setCampoF = (k) => (v) => this.setField({ target: { name: k, value: v } });
         return {
-          heroFaixa: this.mkSel('heroFaixa', 'Faixa de preço', s.f.faixa, faixaO, setFiltro('faixa')),
+          heroFaixa: this.mkSel('heroFaixa', 'Faixa de preço', !fin ? this.tr('Escolha Comprar ou Alugar') : s.f.faixa, faixaO, setFiltro('faixa'), !fin),
           fCategoria: this.mkSel('fCategoria', 'Categoria', s.f.categoria, ['Todas as categorias', ...Component.CATEGORIAS], setCategoria),
           heroCategoria: this.mkSel('heroCategoria', 'Categoria', s.f.categoria, ['Todas as categorias', ...Component.CATEGORIAS], setCategoria),
           fCidade: this.mkSel('fCidade', 'Cidade', s.f.cidade, cidadeO, setFiltro('cidade')),
-          fFaixa: this.mkSel('fFaixa', 'Valor', s.f.faixa, faixaO, setFiltro('faixa')),
+          fFaixa: this.mkSel('fFaixa', 'Valor', !fin ? this.tr('Escolha Comprar ou Alugar') : s.f.faixa, faixaO, setFiltro('faixa'), !fin),
           fDorm: this.mkSel('fDorm', 'Dormitórios', s.f.dorm, ['Qualquer', '2', '3', '4'], setFiltro('dorm')),
           fBan: this.mkSel('fBan', 'Banheiros', s.f.ban, ['Qualquer', '2', '3', '4', '5'], setFiltro('ban')),
           fVagas: this.mkSel('fVagas', 'Vagas', s.f.vagas, ['Qualquer', '1', '2', '4', '6'], setFiltro('vagas')),
@@ -3499,15 +3801,21 @@ const res = await fetch('https://api.web3forms.com/submit', {
       ctaMostrar: 'Mostrar ' + results.length + (results.length === 1 ? ' imóvel' : ' imóveis'),
       painelLabel: nAtivos ? 'Filtros · ' + nAtivos + ' ativo' + (nAtivos > 1 ? 's' : '') : 'Filtros',
       limparLabel: nAtivos ? 'Limpar filtros (' + nAtivos + ')' : 'Limpar filtros',
-      faixaOpts: fin === 'Venda' ? ['Todos os valores', 'Até R$ 500 mil', 'R$ 500 mil – R$ 1 milhão', 'R$ 1 milhão – R$ 1,5 milhão', 'R$ 1,5 milhão – R$ 2 milhões', 'Acima de R$ 2 milhões'] : ['Todos os valores', 'Até R$ 5 mil', 'R$ 5 a 10 mil', 'Acima de R$ 10 mil'],
+      faixaOpts: !fin ? ['Todos os valores'] : fin === 'Venda' ? ['Todos os valores', 'Até R$ 500 mil', 'R$ 500 mil – R$ 1 milhão', 'R$ 1 milhão – R$ 1,5 milhão', 'R$ 1,5 milhão – R$ 2 milhões', 'Acima de R$ 2 milhões'] : ['Todos os valores', 'Até R$ 5 mil', 'R$ 5 a 10 mil', 'Acima de R$ 10 mil'],
       dormOpts: ['Qualquer', '2', '3', '4'], areaOpts: ['Qualquer', '100', '150', '250', '400'],
       ordOpts: ['Mais recentes', 'Menor valor', 'Maior valor'],
       featured: s.carregandoImoveis ? [this.skeletonCard(), this.skeletonCard(), this.skeletonCard()] : s.props.filter(x => x.status === 'Publicado').slice(0, 3).map(x => this.card(x)),
       carregandoImoveis: s.carregandoImoveis,
       results: s.carregandoImoveis ? [this.skeletonCard(), this.skeletonCard(), this.skeletonCard(), this.skeletonCard(), this.skeletonCard(), this.skeletonCard()] : results.map(x => this.card(x)),
       hasResults: s.carregandoImoveis || results.length > 0, noResults: !s.carregandoImoveis && results.length === 0,
-      listTitle: fin === 'Aluguel' ? 'Imóveis para alugar' : 'Imóveis para comprar',
-      listCount: results.length + (results.length === 1 ? ' imóvel encontrado' : ' imóveis encontrados') + (fin === 'Aluguel' ? ' para alugar' : ' para comprar'),
+      listTitle: !fin ? 'Todos os imóveis' : fin === 'Aluguel' ? 'Imóveis para alugar' : 'Imóveis para comprar',
+      listCount: !fin
+        ? (() => {
+            const nV = results.filter(x => x.fin === 'Venda').length, nA = results.filter(x => x.fin === 'Aluguel').length;
+            const partes = [nV ? nV + ' à venda' : '', nA ? nA + ' para alugar' : ''].filter(Boolean).join(', ');
+            return results.length + (results.length === 1 ? ' imóvel encontrado' : ' imóveis encontrados') + (partes ? ' · ' + partes : '');
+          })()
+        : results.length + (results.length === 1 ? ' imóvel encontrado' : ' imóveis encontrados') + (fin === 'Aluguel' ? ' para alugar' : ' para comprar'),
 
       p: {
         titulo: p.titulo, bairro: p.bairro, local: p.bairro + ' · Porto Alegre',
@@ -3517,7 +3825,9 @@ const res = await fetch('https://api.web3forms.com/submit', {
         photo: galleryPhoto, photoCss: this.css(galleryPhoto), photoSrc: galleryPhoto, isUpload: !!galleryPhoto, hasPhoto: !!galleryPhoto, noPhoto: !galleryPhoto,
         phMain: 'FOTO · ' + gLabels[0].toUpperCase(),
         stats: this.statsDe(p),
-        desc1: p.desc1, desc2: p.desc2, difs: p.difs,
+        desc1: p.desc1, difs: p.difs, descBlocos: Component.blocosDescricao(p.desc1),
+        temDesc: !!String(p.desc1 || '').trim() && String(p.desc1).trim() !== 'Descrição em elaboração.',
+        temDifs: (p.difs || []).length > 0,
         fin: [{ k: p.fin === 'Aluguel' ? 'Aluguel mensal' : 'Valor de venda', v: this.precoFmt(p) }, { k: 'Condomínio', v: p.cond ? this.brl(p.cond) + '/mês' : 'não se aplica' }, { k: 'IPTU', v: p.iptu ? this.brl(p.iptu) + '/mês' : 'não informado' }],
         galKey: this.galKey, zoomKey: this.ativaTeclado(() => this.setState({ zoom: true })),
         galAria: this.tr('Galeria do imóvel') + ': ' + p.titulo + ' — ' + this.tr('foto') + ' ' + (galGi + 1) + '/' + galN,
@@ -3601,6 +3911,12 @@ const res = await fetch('https://api.web3forms.com/submit', {
       interesseOpts: ['Comprar', 'Alugar', 'Vender', 'Investir', 'Outro'],
 
       login: s.login, onLogin: this.setLogin, doLogin: this.doLogin, loginErr: !!s.loginErr, loginErrMsg: s.loginErr, recover: this.recover,
+      modoEntrar: (s.loginModo || 'entrar') === 'entrar', modoRecuperar: s.loginModo === 'recuperar', modoNova: s.loginModo === 'nova',
+      recEmail: s.recEmail || '', onRecEmail: this.onRecEmail, recKey: this.recKey, enviaRecuperacao: this.enviaRecuperacao, voltaLogin: this.voltaLogin,
+      recErr: !!s.recErr, recErrMsg: s.recErr || '', recEnviado: !!s.recEnviado, authEnviando: !!s.authEnviando,
+      recBtn: s.authEnviando ? 'Enviando…' : 'Enviar link',
+      novaSenha: s.novaSenha || { a: '', b: '' }, onNovaSenha: this.onNovaSenha, novaSenhaKey: this.novaSenhaKey, salvaNovaSenha: this.salvaNovaSenha,
+      novaErr: !!s.novaErr, novaErrMsg: s.novaErr || '', novaBtn: s.authEnviando ? 'Enviando…' : 'Salvar nova senha', loginEmailKey: this.loginEmailKey, loginSenhaKey: this.loginSenhaKey,
       loginLoading: !!s.loginLoading, loginBtn: s.loginLoading ? 'Entrando…' : 'Entrar',
       newProperty: this.newProp, backToAdmin: this.go('admin'),
       adminStats: [{ v: byStatus('Publicado').length, k: 'Publicados' }, { v: byStatus('Rascunho').length, k: 'Rascunhos' }, { v: byStatus('Arquivado').length, k: 'Arquivados' }],
@@ -3648,11 +3964,22 @@ const res = await fetch('https://api.web3forms.com/submit', {
       tipoFormOpts: ['Apartamento', 'Casa', 'Cobertura', 'Terreno', 'Comercial'],
       bairroFormOpts: Component.BAIRROS,
       precoLabel: s.form.finalidade === 'Aluguel' ? 'Aluguel mensal (R$)' : 'Valor de venda (R$)',
-      difChips: Component.DIFS.map(d => ({ label: d, sel: s.form.difs.includes(d), toggle: this.toggleDif(d), bg: s.form.difs.includes(d) ? '#2A2220' : '#F6F2EC', fg: s.form.difs.includes(d) ? '#F6F2EC' : '#4A403A', border: s.form.difs.includes(d) ? '#2A2220' : '#DED4C6' })),
-      difProprios: s.difsProprios.map(d => ({ label: d, sel: s.form.difs.includes(d), toggle: this.toggleDif(d), remove: this.removeDif(d), ariaRemove: 'Remover diferencial ' + d, bg: s.form.difs.includes(d) ? '#2A2220' : '#F6F2EC', fg: s.form.difs.includes(d) ? '#F6F2EC' : '#4A403A', border: s.form.difs.includes(d) ? '#2A2220' : '#DED4C6' })),
-      temDifsProprios: s.difsProprios.length > 0,
+      difChips: Component.difsSugeridos(s.form.categoria).filter(d => !s.form.difs.some(x => x.toLowerCase() === d.toLowerCase())).map(d => ({ label: d, sel: s.form.difs.includes(d), toggle: this.toggleDif(d), bg: s.form.difs.includes(d) ? '#2A2220' : '#F6F2EC', fg: s.form.difs.includes(d) ? '#F6F2EC' : '#4A403A', border: s.form.difs.includes(d) ? '#2A2220' : '#DED4C6' })),
+      difProprios: s.form.difs.map((d, i) => ({ d, i })).map(({ d, i }) => ({
+        label: d, editando: s.difEdit === i, lendo: s.difEdit !== i, valorEdit: s.difEditVal,
+        abreEdit: this.abreDifEdit(i), onEdit: this.onDifEdit, salvaEdit: this.salvaDifEdit, editKey: this.difEditKey,
+        ariaEdit: 'Editar diferencial: ' + d, remove: this.removeDif(d), ariaRemove: 'Remover diferencial ' + d,
+        arrastavel: s.difEdit !== i ? 'true' : 'false', dragStart: this.difDragStart(i), dragOver: this.difDragOver(i), drop: this.difDrop(i), dragEnd: this.difDragEnd,
+        opac: s.difDrag === i ? 0.45 : 1, borda: s.difSobre === i && s.difDrag !== i ? '#C9A98F' : '#2A2220'
+      })),
+      temDifsProprios: s.form.difs.length > 0,
+      semDifs: s.form.difs.length === 0,
+      temSugestoes: Component.difsSugeridos(s.form.categoria).some(d => !s.form.difs.some(x => x.toLowerCase() === d.toLowerCase())),
+      difAreaRef: this.difAreaRef,
+      difLongo: Component.separaDifs(s.novoDif).concat(s.form.difs).some(d => String(d).length > 60),
+      ...(() => { const n = Component.separaDifs(s.novoDif).filter(v => !s.form.difs.some(x => x.toLowerCase() === v.toLowerCase())).length; return { criarDesativado: n === 0, criarAriaDes: n === 0 ? 'true' : 'false', criarOpac: n === 0 ? 0.5 : 1, criarLabel: n === 0 ? 'Criar diferenciais' : n === 1 ? 'Criar 1 diferencial' : 'Criar ' + n + ' diferenciais' }; })(),
       novoDif: s.novoDif, novoDifAberto: s.novoDifOpen, novoDifFechado: !s.novoDifOpen,
-      onNovoDif: this.onNovoDif, addDif: this.addDif, cancelDif: this.cancelDif, abreNovoDif: this.abreNovoDif, novoDifKey: this.novoDifKey,
+      onNovoDif: this.onNovoDif, addDif: this.addDif, cancelDif: this.cancelDif, abreNovoDif: this.abreNovoDif,
       extrasAbertos: s.extras, extrasIcone: s.extras ? '−' : '+', toggleExtras: this.toggleExtras, toggleElevador: this.toggleElevador,
       camposPrinc: (s.form.categoria === 'Comercial'
         ? [['area', 'Área privativa (m²)', '0'], ['areaTotal', 'Área total (m²)', 'opcional'], ['salas', 'Salas / ambientes', '0'], ['banheiros', 'Banheiros', '0'], ['vagas', 'Vagas', '0']]
@@ -3676,7 +4003,10 @@ const res = await fetch('https://api.web3forms.com/submit', {
       adjBox: 'position:relative;overflow:hidden;background:#EFE8DC;border:1px solid #DED4C6;border-radius:2px;width:100%;aspect-ratio:' + ({ 'Livre': '4/3', '16:9': '16/9', '4:3': '4/3', '1:1': '1/1', '3:4': '3/4' }[s.adj.aspect] || '4/3'),
       adjAspects: ['Livre', '16:9', '4:3', '1:1', '3:4'].map(a => ({ label: a, select: this.setAspect(a), bg: s.adj.aspect === a ? '#2A2220' : '#F6F2EC', fg: s.adj.aspect === a ? '#F6F2EC' : '#4A403A' })),
       setZoom: this.setAdj('zoom'), setX: this.setAdj('x'), setY: this.setAdj('y'), rotate: this.rotate, adjCancel: this.adjCancel, adjApply: this.adjApply,
-      nextStep: this.next, prevStep: this.prev, saveDraft: this.saveDraft, publishNew: this.publishNew,
+      irEtapa6: this.step(6),
+      ...(() => { const d = String(s.form.descricao || '').trim(); const tem = !!d && d !== 'Descrição em elaboração.'; return { revDifs: s.form.difs, revTemDifs: s.form.difs.length > 0, revTemDesc: tem, revSemDesc: !tem, revDescBlocos: tem ? Component.resumoDescricao(d, 4) : [] }; })(),
+      nextStep: this.next, prevStep: this.prev, saveDraft: this.saveDraft, publishNew: this.publishNew, despublicarEdicao: this.despublicarEdicao,
+      ...(() => { const ed = s.editing ? s.props.find(x => x.id === s.editing) : null; const pub = !!ed && ed.status === 'Publicado'; return { w7Novo: !s.editing, w7Publicado: !!s.editing && pub, w7Rascunho: !!s.editing && !pub }; })(),
       mostrarSalvarEdicao: !!s.editing, salvarEdicao: this.salvarEdicao,
       salvarEdicaoLabel: s.salvando ? (s.fotoProg || 'Salvando…') : 'Salvar alterações', salvarEdicaoDisabled: !!s.salvando,
       wizardSalvando: !!s.salvando, wizardBtnLabel: s.salvando ? (s.fotoProg || 'Salvando…') : 'Publicar imóvel', wizardBtnRascunhoLabel: s.salvando ? (s.fotoProg || 'Salvando…') : 'Salvar rascunho',
