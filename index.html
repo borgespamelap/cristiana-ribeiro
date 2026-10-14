@@ -3023,6 +3023,23 @@ const res = await fetch('https://api.web3forms.com/submit', {
 
   static DIFS = ['Piscina', 'Jardim', 'Varanda', 'Espaço gourmet', 'Vista', 'Lareira', 'Terraço', 'Segurança 24h'];
   static DIFS_COM = ['Estacionamento', 'Vão livre', 'Pé-direito alto', 'Copa/cozinha', 'Vitrine para a rua', 'Mezanino', 'Ar-condicionado', 'Segurança 24h'];
+  // fixas da categoria + usadas em outros imóveis da mesma categoria; mais usadas primeiro, até 12, sem as já adicionadas
+  sugestoesDifs() {
+    const s = this.state, cat = s.form.categoria;
+    const mapa = {};
+    const add = (d, ordem) => { const t = String(d || '').trim(); if (!t) return null; const k = t.toLowerCase(); if (!mapa[k]) mapa[k] = { label: t, n: 0, ordem }; return mapa[k]; };
+    Component.difsSugeridos(cat).forEach((d, i) => add(d, i));
+    let extra = 1000;
+    s.props.forEach(p => {
+      if (p.id === s.editing) return;
+      if ((p.categoria || Component.catDeTipo(p.tipo)) !== cat) return;
+      const vistos = {};
+      (p.difs || []).forEach(d => { const o = add(d, extra++); if (o && !vistos[o.label.toLowerCase()]) { vistos[o.label.toLowerCase()] = 1; o.n++; } });
+    });
+    const ja = s.form.difs.map(x => x.toLowerCase());
+    return Object.keys(mapa).map(k => mapa[k]).filter(o => ja.indexOf(o.label.toLowerCase()) === -1)
+      .sort((a, b) => b.n - a.n || a.ordem - b.ordem).slice(0, 12).map(o => o.label);
+  }
   static difsSugeridos(cat) { return cat === 'Comercial' ? Component.DIFS_COM : Component.DIFS; }
   static limpaMarcador(l) { return String(l).replace(/^[\s*\-•]+/, '').trim(); }
   static ehMarcador(l) { return /^\s*[*\-•]/.test(l); }
@@ -3964,7 +3981,7 @@ const res = await fetch('https://api.web3forms.com/submit', {
       tipoFormOpts: ['Apartamento', 'Casa', 'Cobertura', 'Terreno', 'Comercial'],
       bairroFormOpts: Component.BAIRROS,
       precoLabel: s.form.finalidade === 'Aluguel' ? 'Aluguel mensal (R$)' : 'Valor de venda (R$)',
-      difChips: Component.difsSugeridos(s.form.categoria).filter(d => !s.form.difs.some(x => x.toLowerCase() === d.toLowerCase())).map(d => ({ label: d, sel: s.form.difs.includes(d), toggle: this.toggleDif(d), bg: s.form.difs.includes(d) ? '#2A2220' : '#F6F2EC', fg: s.form.difs.includes(d) ? '#F6F2EC' : '#4A403A', border: s.form.difs.includes(d) ? '#2A2220' : '#DED4C6' })),
+      difChips: this.sugestoesDifs().map(d => ({ label: d, sel: s.form.difs.includes(d), toggle: this.toggleDif(d), bg: s.form.difs.includes(d) ? '#2A2220' : '#F6F2EC', fg: s.form.difs.includes(d) ? '#F6F2EC' : '#4A403A', border: s.form.difs.includes(d) ? '#2A2220' : '#DED4C6' })),
       difProprios: s.form.difs.map((d, i) => ({ d, i })).map(({ d, i }) => ({
         label: d, editando: s.difEdit === i, lendo: s.difEdit !== i, valorEdit: s.difEditVal,
         abreEdit: this.abreDifEdit(i), onEdit: this.onDifEdit, salvaEdit: this.salvaDifEdit, editKey: this.difEditKey,
@@ -3974,7 +3991,7 @@ const res = await fetch('https://api.web3forms.com/submit', {
       })),
       temDifsProprios: s.form.difs.length > 0,
       semDifs: s.form.difs.length === 0,
-      temSugestoes: Component.difsSugeridos(s.form.categoria).some(d => !s.form.difs.some(x => x.toLowerCase() === d.toLowerCase())),
+      temSugestoes: this.sugestoesDifs().length > 0,
       difAreaRef: this.difAreaRef,
       difLongo: Component.separaDifs(s.novoDif).concat(s.form.difs).some(d => String(d).length > 60),
       ...(() => { const n = Component.separaDifs(s.novoDif).filter(v => !s.form.difs.some(x => x.toLowerCase() === v.toLowerCase())).length; return { criarDesativado: n === 0, criarAriaDes: n === 0 ? 'true' : 'false', criarOpac: n === 0 ? 0.5 : 1, criarLabel: n === 0 ? 'Criar diferenciais' : n === 1 ? 'Criar 1 diferencial' : 'Criar ' + n + ' diferenciais' }; })(),
